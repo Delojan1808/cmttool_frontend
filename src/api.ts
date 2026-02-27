@@ -90,7 +90,7 @@ export interface Paper {
     abstract: string;
     keywords: string[];
     category: { _id: string; name: string } | string;
-    conference: string | { _id: string; title: string; };
+    conference: string | { _id: string; title: string; submissionDeadline?: string; conferenceDate?: string; };
     status: 'submitted' | 'under_review' | 'reviewed' | 'revision_required' | 'accepted' | 'rejected';
     author: string | { _id: string; name: string; email: string };
     assignedReviewers?: { _id: string; name: string; email: string; professionalField?: string; }[];

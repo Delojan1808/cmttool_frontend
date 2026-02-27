@@ -38,6 +38,13 @@ const SignUp = () => {
     setError('');
     setSuccess('');
 
+    // Strict email regex validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
     setLoading(true);
     try {
       await registerUser({

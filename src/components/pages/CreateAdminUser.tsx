@@ -38,6 +38,12 @@ const CreateAdminUser: React.FC<CreateAdminUserProps> = ({ onSuccess, onCancel }
             return;
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
         if ((role === 'Sub Editor' || role === 'Reviewer') && !professionalField) {
             setError('Professional field is required for Sub Editors and Reviewers.');
             return;

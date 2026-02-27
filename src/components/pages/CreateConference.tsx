@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { conferenceService, type ConferenceData } from '../../services/conferenceService';
+import { getFields, type ProfessionalField } from '../../api';
 
 interface CreateConferenceProps {
     onSuccess: () => void;
@@ -9,8 +10,36 @@ interface CreateConferenceProps {
 
 const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel, initialData }) => {
     const isEditing = !!initialData;
+    const isCompleted = isEditing && initialData?.conferenceDate ? new Date(initialData.conferenceDate) < new Date() : false;
+
     const [title, setTitle] = useState(initialData?.title || '');
-    const [fieldsInput, setFieldsInput] = useState(initialData?.professionalFields?.join(', ') || '');
+    const [availableFields, setAvailableFields] = useState<ProfessionalField[]>([]);
+    const [selectedFields, setSelectedFields] = useState<string[]>([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        getFields().then(setAvailableFields).catch(console.error);
+        if (initialData?.professionalFields) {
+            setSelectedFields(initialData.professionalFields.map(f => typeof f === 'object' ? f._id : f));
+        }
+    }, [initialData]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleFieldToggle = (fieldId: string) => {
+        setSelectedFields(prev =>
+            prev.includes(fieldId) ? prev.filter(id => id !== fieldId) : [...prev, fieldId]
+        );
+    };
 
     // Format dates for datetime-local input (YYYY-MM-DDTHH:mm)
     const formatDateForInput = (dateString?: string) => {
@@ -30,15 +59,28 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
         setError(null);
 
         // Basic validation
-        if (!title.trim() || !fieldsInput.trim() || !submissionDeadline || !conferenceDate) {
-            setError('All fields are required.');
+        if (!title.trim() || selectedFields.length === 0 || !submissionDeadline || !conferenceDate) {
+            setError('All fields are required and at least one professional field must be selected.');
             return;
         }
 
-        const professionalFields = fieldsInput.split(',').map(f => f.trim()).filter(f => f !== '');
+        const now = new Date();
+        const deadlineDate = new Date(submissionDeadline);
+        const confDate = new Date(conferenceDate);
 
-        if (professionalFields.length === 0) {
-            setError('Please provide at least one professional field.');
+        if (!isEditing) {
+            if (deadlineDate <= now) {
+                setError('Submission deadline must be a future date and time.');
+                return;
+            }
+            if (confDate <= now) {
+                setError('Conference date must be a future date and time.');
+                return;
+            }
+        }
+
+        if (confDate <= deadlineDate) {
+            setError('Conference date must be after the submission deadline.');
             return;
         }
 
@@ -46,7 +88,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
             setLoading(true);
             const data: ConferenceData = {
                 title,
-                professionalFields,
+                professionalFields: selectedFields,
                 submissionDeadline,
                 conferenceDate
             };
@@ -78,6 +120,12 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
             )}
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {isCompleted && (
+                    <div style={{ padding: '1rem', background: 'rgba(59,130,246,0.1)', color: 'var(--secondary)', borderRadius: 'var(--radius-md)', marginBottom: '1rem' }}>
+                        This conference has already passed. You cannot edit completed conferences.
+                    </div>
+                )}
+
                 <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Conference Title</label>
                     <input
@@ -86,23 +134,67 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="e.g. International Conference on Information Technology 2026"
                         style={inputStyle}
+                        disabled={isCompleted}
                         required
                     />
                 </div>
 
-                <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Professional Fields (comma separated)</label>
-                    <input
-                        type="text"
-                        value={fieldsInput}
-                        onChange={(e) => setFieldsInput(e.target.value)}
-                        placeholder="e.g. Computer Science, Mathematics, Physics"
-                        style={inputStyle}
-                        required
-                    />
-                    <small style={{ color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>
-                        Enter the areas of study relevant to this conference, separated by commas.
-                    </small>
+                <div ref={dropdownRef} style={{ position: 'relative' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Professional Fields</label>
+                    <div
+                        onClick={() => !isCompleted && setIsDropdownOpen(!isDropdownOpen)}
+                        style={{ ...inputStyle, cursor: isCompleted ? 'not-allowed' : 'pointer', display: 'flex', flexWrap: 'wrap', gap: '0.4rem', minHeight: '45px', alignItems: 'center', opacity: isCompleted ? 0.6 : 1 }}
+                    >
+                        {selectedFields.length === 0 ? (
+                            <span style={{ color: 'var(--text-muted)' }}>Select professional fields...</span>
+                        ) : (
+                            selectedFields.map(id => {
+                                const field = availableFields.find(f => f._id === id);
+                                return (
+                                    <span key={id} className="badge badge-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem' }}>
+                                        {field ? field.name : id}
+                                        <button
+                                            type="button"
+                                            onClick={(e) => { e.stopPropagation(); !isCompleted && handleFieldToggle(id); }}
+                                            style={{ background: 'none', border: 'none', color: 'currentColor', cursor: isCompleted ? 'not-allowed' : 'pointer', padding: 0, fontSize: '0.8rem', opacity: 0.7 }}
+                                            disabled={isCompleted}
+                                        >
+                                            ✕
+                                        </button>
+                                    </span>
+                                );
+                            })
+                        )}
+                    </div>
+                    {isDropdownOpen && (
+                        <div className="glass-card" style={{
+                            position: 'absolute', top: '100%', left: 0, right: 0,
+                            zIndex: 50, marginTop: '0.5rem', maxHeight: '250px',
+                            overflowY: 'auto', padding: '0.5rem',
+                            boxShadow: '0 10px 25px rgba(0,0,0,0.8)',
+                            backgroundColor: 'var(--bg-dark)',
+                            border: '1px solid var(--glass-border)'
+                        }}>
+                            {availableFields.length === 0 ? (
+                                <div style={{ padding: '0.5rem', color: 'var(--text-muted)', textAlign: 'center' }}>No fields available</div>
+                            ) : (
+                                availableFields.map(field => (
+                                    <label key={field._id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem', cursor: 'pointer', borderRadius: 'var(--radius-sm)', transition: 'background 0.2s', margin: 0 }}
+                                        onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                        onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedFields.includes(field._id)}
+                                            onChange={() => handleFieldToggle(field._id)}
+                                            style={{ accentColor: 'var(--primary)', width: '16px', height: '16px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ color: 'var(--text-primary)' }}>{field.name}</span>
+                                    </label>
+                                ))
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -113,6 +205,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                             value={submissionDeadline}
                             onChange={(e) => setSubmissionDeadline(e.target.value)}
                             style={inputStyle}
+                            disabled={isCompleted}
                             required
                         />
                     </div>
@@ -124,6 +217,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                             value={conferenceDate}
                             onChange={(e) => setConferenceDate(e.target.value)}
                             style={inputStyle}
+                            disabled={isCompleted}
                             required
                         />
                     </div>
@@ -133,7 +227,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                     <button
                         type="submit"
                         className="btn-primary"
-                        disabled={loading}
+                        disabled={loading || isCompleted}
                     >
                         {loading ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Conference' : 'Create Conference')}
                     </button>

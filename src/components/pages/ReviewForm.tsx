@@ -143,7 +143,12 @@ export default function ReviewForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!paperId) return;
+        if (!paperId || !paper) return;
+
+        if (paper.reviewDeadline && new Date(paper.reviewDeadline) < new Date()) {
+            setError('The review deadline has passed. You can no longer submit a review.');
+            return;
+        }
 
         setSubmitting(true);
         setError('');
@@ -333,13 +338,13 @@ export default function ReviewForm() {
                         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem' }}>
                             <button
                                 type="submit"
-                                disabled={submitting}
+                                disabled={submitting || (paper.reviewDeadline ? new Date(paper.reviewDeadline) < new Date() : false)}
                                 className="btn-primary"
                                 style={{
                                     padding: '12px 32px',
                                     fontSize: '1rem',
-                                    opacity: submitting ? 0.7 : 1,
-                                    cursor: submitting ? 'not-allowed' : 'pointer'
+                                    opacity: submitting || (paper.reviewDeadline && new Date(paper.reviewDeadline) < new Date()) ? 0.7 : 1,
+                                    cursor: submitting || (paper.reviewDeadline && new Date(paper.reviewDeadline) < new Date()) ? 'not-allowed' : 'pointer'
                                 }}
                             >
                                 {submitting ? 'Submitting Review...' : 'Submit Review'}

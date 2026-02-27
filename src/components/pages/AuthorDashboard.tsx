@@ -318,9 +318,15 @@ const AuthorDashboard: React.FC = () => {
                                         {(paper.status === 'submitted' || paper.status === 'revision_required' || paper.status === 'accepted') && paper._id !== editingPaper?._id && (
                                             <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
                                                 {paper.status === 'submitted' && (
-                                                    <button className="btn-secondary" style={{ width: '100%', borderColor: 'var(--primary)', color: 'var(--primary)', marginBottom: '0.5rem' }} onClick={() => openModalForRevision(paper, 'edit-submission')}>
-                                                        ✏️ Edit Submission
-                                                    </button>
+                                                    typeof paper.conference === 'object' && paper.conference.submissionDeadline && new Date(paper.conference.submissionDeadline) < new Date() ? (
+                                                        <div style={{ color: 'var(--warning)', fontSize: '0.85rem', marginBottom: '0.5rem', textAlign: 'center', padding: '0.5rem', background: 'rgba(245, 158, 11, 0.1)', borderRadius: 'var(--radius-sm)' }}>
+                                                            Submission deadline has passed. Editing is locked.
+                                                        </div>
+                                                    ) : (
+                                                        <button className="btn-secondary" style={{ width: '100%', borderColor: 'var(--primary)', color: 'var(--primary)', marginBottom: '0.5rem' }} onClick={() => openModalForRevision(paper, 'edit-submission')}>
+                                                            ✏️ Edit Submission
+                                                        </button>
+                                                    )
                                                 )}
                                                 {paper.status === 'revision_required' && (
                                                     <button className="btn-secondary" style={{ width: '100%', borderColor: 'var(--warning)', color: 'var(--warning)' }} onClick={() => openModalForRevision(paper, 'revision')}>

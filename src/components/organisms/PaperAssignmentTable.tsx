@@ -78,6 +78,28 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
     }, [loadData]);
 
     const handleReviewerChange = async (paper: Paper, reviewerId: string, deadline?: string) => {
+        if (reviewerId !== '') {
+            const now = new Date();
+            // Match backend default of +14 days if not explicitly provided
+            const selectedDeadline = deadline ? new Date(deadline) : new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+
+            if (selectedDeadline <= now) {
+                showToast('Review deadline must be a future date', 'error');
+                // Reset the select dropdown visually by clearing assigning ID
+                setAssigningId(null);
+                return;
+            }
+
+            if (typeof paper.conference === 'object' && paper.conference.conferenceDate) {
+                const confDate = new Date(paper.conference.conferenceDate);
+                if (selectedDeadline >= confDate) {
+                    showToast('Review deadline must be before the conference date', 'error');
+                    setAssigningId(null);
+                    return;
+                }
+            }
+        }
+
         setAssigningId(paper._id);
         try {
             let updated: Paper;
