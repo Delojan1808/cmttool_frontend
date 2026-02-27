@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../templates/MainLayout';
-import { submitReview, getAssignedPapers, type Paper, type Evaluation } from '../../api';
+import { submitReview, getAssignedPapers, downloadPaper, type Paper, type Evaluation } from '../../api';
 
 // Reusable component for the Yes/No + Comment block
 function EvaluationRow({
@@ -130,6 +130,17 @@ export default function ReviewForm() {
         if (paperId) fetchPaper();
     }, [paperId]);
 
+    const handleViewPdf = async () => {
+        if (!paper) return;
+        try {
+            const blob = await downloadPaper(paper._id);
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        } catch (err: any) {
+            alert(err.message || 'Failed to download paper');
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!paperId) return;
@@ -187,6 +198,18 @@ export default function ReviewForm() {
 
                             <div style={{ fontWeight: 600 }}>Professional Field:</div>
                             <div style={{ color: 'var(--text-muted)' }}>{typeof paper.category === 'object' ? paper.category.name : paper.category}</div>
+
+                            <div style={{ fontWeight: 600 }}>Document:</div>
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={handleViewPdf}
+                                    className="btn-secondary"
+                                    style={{ padding: '4px 12px', fontSize: '0.85rem' }}
+                                >
+                                    View PDF
+                                </button>
+                            </div>
                         </div>
                     </div>
 

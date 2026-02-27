@@ -211,6 +211,24 @@ export async function updatePaperStatus(paperId: string, status: string): Promis
     return body.data.paper;
 }
 
+/** GET /api/papers/:id/download — All authenticated users */
+export async function downloadPaper(paperId: string): Promise<Blob> {
+    const res = await fetch(`${BASE_URL}/papers/${paperId}/download`, {
+        headers: getHeaders(),
+        credentials: 'include'
+    });
+    if (!res.ok) {
+        if (res.status === 401) {
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || `HTTP error ${res.status}`);
+    }
+    return res.blob();
+}
+
 /** PUT /api/papers/:id/decline-review — Reviewer */
 export async function declineReviewAssignment(paperId: string): Promise<Paper> {
     const res = await fetch(`${BASE_URL}/papers/${paperId}/decline-review`, {

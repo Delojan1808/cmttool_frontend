@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../templates/MainLayout';
-import { getAssignedPapers, declineReviewAssignment, type Paper } from '../../api';
+import { getAssignedPapers, declineReviewAssignment, downloadPaper, type Paper } from '../../api';
 
 const STATUS_CLASSES: Record<string, string> = {
     draft: 'badge-warning',
@@ -46,6 +46,16 @@ export default function ReviewerDashboard() {
         } catch (err: any) {
             alert(err.message || 'Failed to decline review assignment');
             setDecliningId(null);
+        }
+    };
+
+    const handleViewPdf = async (paperId: string) => {
+        try {
+            const blob = await downloadPaper(paperId);
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        } catch (err: any) {
+            alert(err.message || 'Failed to download paper');
         }
     };
 
@@ -117,36 +127,45 @@ export default function ReviewerDashboard() {
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: '1.2rem 1.5rem', textAlign: 'right' }}>
-                                                    {isReviewed ? (
+                                                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                                                         <button
-                                                            disabled
-                                                            style={{
-                                                                padding: '8px 16px', borderRadius: 'var(--radius-sm)',
-                                                                background: 'rgba(255,255,255,0.1)', color: 'var(--text-muted)',
-                                                                border: '1px solid var(--glass-border)', fontWeight: 600, cursor: 'not-allowed'
-                                                            }}
+                                                            onClick={() => handleViewPdf(paper._id)}
+                                                            className="btn-secondary"
+                                                            style={{ padding: '8px 16px', fontSize: '0.9rem' }}
                                                         >
-                                                            Reviewed
+                                                            View PDF
                                                         </button>
-                                                    ) : (
-                                                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                                        {isReviewed ? (
                                                             <button
-                                                                onClick={() => handleDecline(paper._id, paper.title)}
-                                                                className="btn-secondary"
-                                                                disabled={decliningId === paper._id}
-                                                                style={{ padding: '8px 16px', fontSize: '0.9rem', color: 'var(--error)', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                                                                disabled
+                                                                style={{
+                                                                    padding: '8px 16px', borderRadius: 'var(--radius-sm)',
+                                                                    background: 'rgba(255,255,255,0.1)', color: 'var(--text-muted)',
+                                                                    border: '1px solid var(--glass-border)', fontWeight: 600, cursor: 'not-allowed'
+                                                                }}
                                                             >
-                                                                {decliningId === paper._id ? 'Declining...' : 'Decline'}
+                                                                Reviewed
                                                             </button>
-                                                            <button
-                                                                onClick={() => navigate(`/reviewer/form/${paper._id}`)}
-                                                                className="btn-primary"
-                                                                style={{ padding: '8px 16px', fontSize: '0.9rem' }}
-                                                            >
-                                                                Review
-                                                            </button>
-                                                        </div>
-                                                    )}
+                                                        ) : (
+                                                            <>
+                                                                <button
+                                                                    onClick={() => handleDecline(paper._id, paper.title)}
+                                                                    className="btn-secondary"
+                                                                    disabled={decliningId === paper._id}
+                                                                    style={{ padding: '8px 16px', fontSize: '0.9rem', color: 'var(--error)', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                                                                >
+                                                                    {decliningId === paper._id ? 'Declining...' : 'Decline'}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => navigate(`/reviewer/form/${paper._id}`)}
+                                                                    className="btn-primary"
+                                                                    style={{ padding: '8px 16px', fontSize: '0.9rem' }}
+                                                                >
+                                                                    Review
+                                                                </button>
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         );
