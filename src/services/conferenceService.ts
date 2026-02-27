@@ -1,7 +1,7 @@
 export interface ConferenceData {
     _id?: string;
     title: string;
-    professionalFields: string[];
+    professionalFields: Array<{ _id: string; name: string } | string>;
     submissionDeadline: string;
     conferenceDate: string;
     createdBy?: {

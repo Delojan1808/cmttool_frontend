@@ -155,8 +155,10 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                         ) : (
                             papers.map(paper => {
                                 const isAssigning = assigningId === paper._id;
+                                // Get the category name string for comparison (category is now a populated object)
+                                const categoryName = typeof paper.category === 'object' ? paper.category.name : paper.category;
                                 // Filter reviewers whose professional field matches this paper's professional field
-                                const availableReviewers = reviewers.filter(r => r.professionalField === paper.category);
+                                const availableReviewers = reviewers.filter(r => r.professionalField === categoryName);
 
                                 return (
                                     <tr key={paper._id} style={{ borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s' }} onMouseEnter={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.05)'; }} onMouseLeave={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'; }}>
@@ -171,7 +173,7 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                                             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{paper.author && typeof paper.author === 'object' ? paper.author.email : ''}</div>
                                         </td>
                                         <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                                            {paper.category}
+                                            {typeof paper.category === 'object' ? paper.category.name : paper.category}
                                         </td>
                                         <td style={{ padding: '1.2rem 1.5rem' }}>
                                             <StatusBadge status={paper.status} />

@@ -89,7 +89,7 @@ export interface Paper {
     title: string;
     abstract: string;
     keywords: string[];
-    category: string;
+    category: { _id: string; name: string } | string;
     conference: string | { _id: string; title: string; };
     status: 'submitted' | 'under_review' | 'reviewed' | 'revision_required' | 'accepted' | 'rejected';
     author: string | { _id: string; name: string; email: string };
@@ -115,7 +115,7 @@ export interface ProfessionalField {
 export interface Conference {
     _id: string;
     title: string;
-    professionalFields: string[];
+    professionalFields: Array<{ _id: string; name: string } | string>;
     submissionDeadline: string;
     conferenceDate: string;
     sessions?: {

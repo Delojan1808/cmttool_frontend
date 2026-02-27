@@ -22,11 +22,14 @@ const AuthorDashboard: React.FC = () => {
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
 
-    // Filter fields based on the selected conference
+    // Filter fields based on the selected conference (populated objects)
     const availableFields = React.useMemo(() => {
         if (!conferenceId) return [];
         const selectedConf = conferences.find(c => c._id === conferenceId);
-        return selectedConf?.professionalFields || [];
+        // professionalFields are now populated {_id, name} objects
+        return (selectedConf?.professionalFields || []).map(f =>
+            typeof f === 'string' ? { _id: f, name: f } : f
+        ) as { _id: string; name: string }[];
     }, [conferenceId, conferences]);
 
     const loadData = useCallback(async () => {
@@ -81,9 +84,9 @@ const AuthorDashboard: React.FC = () => {
 
         setConferenceId(confId);
 
-        // Must delay setting category slightly if availableFields depends on conferenceId changing,
-        // but react batches state updates so it's usually okay.
-        setCategory(paper.category);
+        // Extract category name string (category may now be a populated object)
+        const catName = typeof paper.category === 'object' ? paper.category.name : paper.category;
+        setCategory(catName);
 
         setSubmitError(null);
         setShowSubmitModal(true);
@@ -105,7 +108,7 @@ const AuthorDashboard: React.FC = () => {
             formData.append('title', title);
             formData.append('abstract', abstract);
             formData.append('keywords', keywords);
-            formData.append('category', category);
+            formData.append('category', category); // category state holds the field _id
             if (submissionType === 'new') {
                 formData.append('conferenceId', conferenceId);
             }
@@ -227,8 +230,8 @@ const AuthorDashboard: React.FC = () => {
                                         required
                                     >
                                         <option value="">Select Professional Field...</option>
-                                        {availableFields.map(c => (
-                                            <option key={c} value={c}>{c}</option>
+                                        {availableFields.map(f => (
+                                            <option key={f._id} value={f._id}>{f.name}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -300,7 +303,7 @@ const AuthorDashboard: React.FC = () => {
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                                             <span className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)' }}>
-                                                {paper.category}
+                                                {typeof paper.category === 'object' ? paper.category.name : paper.category}
                                             </span>
                                             <span className={`badge ${paper.status === 'accepted' ? 'badge-success' : paper.status === 'rejected' ? 'badge-error' : paper.status === 'submitted' ? 'badge-primary' : 'badge-warning'}`}>
                                                 {paper.status.replace(/_/g, ' ').toUpperCase()}

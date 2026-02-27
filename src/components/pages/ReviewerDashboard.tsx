@@ -98,7 +98,7 @@ export default function ReviewerDashboard() {
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-muted)' }}>
-                                                    {paper.category}
+                                                    {typeof paper.category === 'object' ? paper.category.name : paper.category}
                                                 </td>
                                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>

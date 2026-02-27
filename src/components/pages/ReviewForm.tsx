@@ -186,7 +186,7 @@ export default function ReviewForm() {
                             <div style={{ fontWeight: 500, color: 'var(--primary)' }}>{paper.title}</div>
 
                             <div style={{ fontWeight: 600 }}>Professional Field:</div>
-                            <div style={{ color: 'var(--text-muted)' }}>{paper.category}</div>
+                            <div style={{ color: 'var(--text-muted)' }}>{typeof paper.category === 'object' ? paper.category.name : paper.category}</div>
                         </div>
                     </div>
 

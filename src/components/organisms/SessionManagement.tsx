@@ -100,7 +100,7 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
                                         <div key={paper._id} className="glass-card" style={{ padding: '1rem' }}>
                                             <strong>{paper.title}</strong>
                                             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                                                {typeof paper.author === 'object' ? paper.author.name : 'Unknown Author'} | {paper.category}
+                                                {typeof paper.author === 'object' ? paper.author.name : 'Unknown Author'} | {typeof paper.category === 'object' ? paper.category.name : paper.category}
                                             </div>
                                             <div style={{ marginTop: '0.5rem' }}>
                                                 <select

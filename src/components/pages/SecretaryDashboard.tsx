@@ -194,7 +194,7 @@ const SecretaryDashboard: React.FC = () => {
                                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
                                             {conf.professionalFields.map((field, i) => (
                                                 <span key={i} className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--text-secondary)', border: '1px solid var(--glass-border)' }}>
-                                                    {field}
+                                                    {typeof field === 'object' ? field.name : field}
                                                 </span>
                                             ))}
                                         </div>
