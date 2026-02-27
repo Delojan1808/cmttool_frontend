@@ -98,6 +98,7 @@ const SecretaryDashboard: React.FC = () => {
                     margin: '0 0 2rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(6,182,212,0.1))'
                 }}>
+                    <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Secretary Dashboard</h1>
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <button
                             className="btn-primary"

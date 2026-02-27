@@ -13,7 +13,7 @@ const STATUS_CLASSES: Record<string, string> = {
     revision_required: 'badge-error',
 };
 
-const formatStatus = (status: string) => status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+const formatStatus = (status: string) => status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
 export default function ReviewerDashboard() {
     const [papers, setPapers] = useState<Paper[]>([]);

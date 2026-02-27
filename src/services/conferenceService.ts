@@ -32,6 +32,12 @@ function getHeaders(): HeadersInit {
 async function handleResponse<T>(res: Response): Promise<T> {
     const data = await res.json();
     if (!res.ok) {
+        // If token expired or invalid, auto-logout and redirect to login
+        if (res.status === 401) {
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user');
+            window.location.href = '/login';
+        }
         throw new Error(data.message || `HTTP error ${res.status}`);
     }
     return data as T;

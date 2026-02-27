@@ -268,7 +268,7 @@ const AuthorDashboard: React.FC = () => {
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                                <button type="submit" className="btn-primary" disabled={submitting || conferences.length === 0}>
+                                <button type="submit" className="btn-primary" disabled={submitting || (submissionType === 'new' && conferences.length === 0)}>
                                     {submitting ? 'Submitting...' : 'Upload & Submit'}
                                 </button>
                             </div>
@@ -303,7 +303,7 @@ const AuthorDashboard: React.FC = () => {
                                                 {paper.category}
                                             </span>
                                             <span className={`badge ${paper.status === 'accepted' ? 'badge-success' : paper.status === 'rejected' ? 'badge-error' : paper.status === 'submitted' ? 'badge-primary' : 'badge-warning'}`}>
-                                                {paper.status.replace('_', ' ').toUpperCase()}
+                                                {paper.status.replace(/_/g, ' ').toUpperCase()}
                                             </span>
                                         </div>
 

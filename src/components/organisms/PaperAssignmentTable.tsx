@@ -24,7 +24,7 @@ const EVALUATION_QUESTIONS: Record<string, string> = {
     q9_noPlagiarism: "No plagiarism/duplication"
 };
 
-const formatStatus = (status: string) => status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+const formatStatus = (status: string) => status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
 const StatusBadge = ({ status }: { status: string }) => {
     const cls = STATUS_CLASSES[status] || 'badge-primary';
@@ -186,7 +186,7 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                                                     >
                                                         View Reviews & Decide
                                                     </button>
-                                                ) : (
+                                                ) : userRole !== 'editor' ? (
                                                     <>
                                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                                             <input
@@ -223,6 +223,8 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                                                             </span>
                                                         )}
                                                     </>
+                                                ) : (
+                                                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>—</span>
                                                 )}
                                             </div>
                                         </td>
