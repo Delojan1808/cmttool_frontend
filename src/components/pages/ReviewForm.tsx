@@ -113,7 +113,7 @@ export default function ReviewForm() {
                     setPaper(found);
 
                     // Pre-fill reviewer email if available
-                    const authUser = localStorage.getItem('user');
+                    const authUser = sessionStorage.getItem('user');
                     if (authUser) {
                         const userObj = JSON.parse(authUser);
                         setReviewerInfo(prev => ({ ...prev, email: userObj.email || '', nameWithInitials: userObj.name || '' }));

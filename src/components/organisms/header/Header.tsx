@@ -7,7 +7,7 @@ import { useEffect, useState, useRef } from "react";
 type HeaderProps = {};
 const Header: React.FC<HeaderProps> = () => {
   const navigate = useNavigate();
-  const isAuthenticated = !!localStorage.getItem('token');
+  const isAuthenticated = !!sessionStorage.getItem('token');
 
   const handleLogout = async () => {
     try {
@@ -164,12 +164,17 @@ const Header: React.FC<HeaderProps> = () => {
             title="Logout"
             onClick={handleLogout}
             style={{
-              width: '40px', height: '40px', borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)', border: '1px solid var(--glass-border)',
-              display: 'flex', justifyContent: 'center', alignItems: 'center',
-              cursor: 'pointer', transition: 'all 0.3s ease', color: 'var(--text-primary)'
-            }} onMouseOver={(e) => e.currentTarget.style.background = 'var(--error)'} onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}>
+              height: '40px', borderRadius: '8px',
+              background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239,68,68,0.5)',
+              display: 'flex', alignItems: 'center', gap: '0.5rem',
+              padding: '0 1rem',
+              cursor: 'pointer', transition: 'all 0.3s ease', color: '#f87171',
+              fontWeight: 600, fontSize: '0.9rem'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.35)'; e.currentTarget.style.borderColor = 'rgba(239,68,68,0.8)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; e.currentTarget.style.borderColor = 'rgba(239,68,68,0.5)'; }}>
             <FontAwesomeIcon icon={faSignOutAlt} />
+            Logout
           </button>
         </div>
       )}

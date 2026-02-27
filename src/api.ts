@@ -1,7 +1,7 @@
 const BASE_URL = 'http://localhost:5000/api';
 
 function getHeaders(): HeadersInit {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {})
@@ -11,6 +11,12 @@ function getHeaders(): HeadersInit {
 async function handleResponse<T>(res: Response): Promise<T> {
     const data = await res.json();
     if (!res.ok) {
+        // If token expired or invalid, auto-logout and redirect to login
+        if (res.status === 401) {
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user');
+            window.location.href = '/login';
+        }
         throw new Error(data.message || `HTTP error ${res.status}`);
     }
     return data as T;
@@ -50,8 +56,9 @@ export async function createAdminUser(payload: any): Promise<any> {
 
 export async function logoutUser(): Promise<void> {
     // Backend has no logout endpoint — JWT is stateless.
-    // Clear the stored token on the client side.
-    localStorage.removeItem('token');
+    // Clear ALL stored auth data on the client side.
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
 }
 
 export async function getProfile(): Promise<any> {

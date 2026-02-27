@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
+    const userStr = sessionStorage.getItem('user');
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
@@ -34,9 +34,9 @@ const Login = () => {
     try {
       const res = await loginUser(email, password);
       if (res.success) {
-        // Store the JWT token and user info in localStorage
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+        // Store the JWT token and user info in sessionStorage (clears on tab close)
+        sessionStorage.setItem('token', res.data.token);
+        sessionStorage.setItem('user', JSON.stringify(res.data.user));
 
         const userRole = res.data.user.role;
         // Role-based redirect
