@@ -153,10 +153,20 @@ const AuthorDashboard: React.FC = () => {
                 {showSubmitModal && (
                     <div className="glass-card" style={{ marginBottom: '2rem', animation: 'fadeIn 0.3s ease' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                            <h2 style={{ margin: 0 }}>
-                                {submissionType === 'new' ? '📝 Submit Paper' : submissionType === 'revision' ? '🔄 Submit Revision' : submissionType === 'edit-submission' ? '✏️ Edit Submission' : '📄 Submit Camera-Ready'}
-                            </h2>
-                            <button onClick={() => setShowSubmitModal(false)} className="btn-secondary" style={{ padding: '0.4rem 0.8rem' }}>✕ Cancel</button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <button
+                                    onClick={() => { setShowSubmitModal(false); setEditingPaper(null); }}
+                                    style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', transition: 'color 0.2s', padding: 0 }}
+                                    onMouseOver={(e) => e.currentTarget.style.color = 'var(--primary-hover)'}
+                                    onMouseOut={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                                >
+                                    ← Back
+                                </button>
+                                <h2 style={{ margin: 0 }}>
+                                    {submissionType === 'new' ? '📝 Submit Paper' : submissionType === 'revision' ? '🔄 Submit Revision' : submissionType === 'edit-submission' ? '✏️ Edit Submission' : '📄 Submit Camera-Ready'}
+                                </h2>
+                            </div>
+                            <button onClick={() => { setShowSubmitModal(false); setEditingPaper(null); }} className="btn-secondary" style={{ padding: '0.4rem 0.8rem' }}>✕ Cancel</button>
                         </div>
 
                         {submitError && (
