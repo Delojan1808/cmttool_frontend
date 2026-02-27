@@ -1,0 +1,73 @@
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\api.ts
+  21:75  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  57:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\atoms\input\Input.tsx
+  3:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\organisms\SessionManagement.tsx
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\organisms\footer\Footer.tsx
+  1:20  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\organisms\header\Header.tsx
+  7:20  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\AuthorDashboard.tsx
+   45:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   80:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  244:81  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\CreateAdminUser.tsx
+   48:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   55:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  120:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\CreateConference.tsx
+  60:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\EditorDashboard.tsx
+  26:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\FieldManagement.tsx
+  27:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  77:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\Login.tsx
+  36:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\ReviewForm.tsx
+  232:98  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\ReviewerDashboard.tsx
+  46:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\SecretaryDashboard.tsx
+  50:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\components\pages\SignUp.tsx
+  45:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\src\services\conferenceService.ts
+  78:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 32 problems (32 errors, 0 warnings)
+

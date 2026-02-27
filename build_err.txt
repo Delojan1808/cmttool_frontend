@@ -1,0 +1,12 @@
+[31m✗[39m Build failed in 58ms
+[31merror during build:
+[31m[vite:css] Failed to load PostCSS config (searchPath: C:/Users/Aruleswaran Delojan/Documents/cmttool/frontend/cmtToolFrontend): [Error] 'tsx' or 'jiti' is required for the TypeScript configuration files. Make sure it is installed
+Error: Cannot find package 'tsx' imported from C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\node_modules\vite\dist\node\chunks\dep-B0GuR2De.js
+Cannot find package 'jiti' imported from C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\node_modules\vite\dist\node\chunks\dep-B0GuR2De.js
+Error: 'tsx' or 'jiti' is required for the TypeScript configuration files. Make sure it is installed
+Error: Cannot find package 'tsx' imported from C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\node_modules\vite\dist\node\chunks\dep-B0GuR2De.js
+Cannot find package 'jiti' imported from C:\Users\Aruleswaran Delojan\Documents\cmttool\frontend\cmtToolFrontend\node_modules\vite\dist\node\chunks\dep-B0GuR2De.js
+    at req$3 (file:///C:/Users/Aruleswaran%20Delojan/Documents/cmttool/frontend/cmtToolFrontend/node_modules/vite/dist/node/chunks/dep-B0GuR2De.js:8447:9)
+    at async Object.search (file:///C:/Users/Aruleswaran%20Delojan/Documents/cmttool/frontend/cmtToolFrontend/node_modules/vite/dist/node/chunks/dep-B0GuR2De.js:8243:24)[31m
+file: [36mC:/Users/Aruleswaran Delojan/Documents/cmttool/frontend/cmtToolFrontend/src/index.css[31m
+[39m
