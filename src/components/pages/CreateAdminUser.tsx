@@ -51,15 +51,15 @@ const CreateAdminUser: React.FC<CreateAdminUserProps> = ({ onSuccess, onCancel }
 
         try {
             setLoading(true);
-            const payload: any = { name, email, password, role };
+            const payload: Record<string, string> = { name, email, password, role };
             if (role === 'Sub Editor' || role === 'Reviewer') {
                 payload.professionalField = professionalField;
             }
 
             await createAdminUser(payload);
             onSuccess();
-        } catch (err: any) {
-            setError(err.message || 'Failed to create user');
+        } catch (err: unknown) {
+            setError((err as Error).message || 'Failed to create user');
         } finally {
             setLoading(false);
         }
@@ -123,7 +123,7 @@ const CreateAdminUser: React.FC<CreateAdminUserProps> = ({ onSuccess, onCancel }
                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Role *</label>
                         <select
                             value={role}
-                            onChange={(e) => setRole(e.target.value as any)}
+                            onChange={(e) => setRole(e.target.value as 'Editor' | 'Sub Editor' | 'Reviewer')}
                             style={inputStyle}
                             required
                         >

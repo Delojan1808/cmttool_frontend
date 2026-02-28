@@ -51,8 +51,8 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
             setSessionName('');
             setStartTime('');
             setEndTime('');
-        } catch (err: any) {
-            alert(err.message || 'Failed to create session');
+        } catch (err: unknown) {
+            alert((err as Error).message || 'Failed to create session');
         } finally {
             setLoading(false);
         }
@@ -63,8 +63,8 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
         try {
             const updated = await conferenceService.assignPaperToSession(conference._id!, sessionId, paperId);
             setLocalConference(updated);
-        } catch (err: any) {
-            alert(err.message || 'Failed to assign paper');
+        } catch (err: unknown) {
+            alert((err as Error).message || 'Failed to assign paper');
         } finally {
             setLoading(false);
         }

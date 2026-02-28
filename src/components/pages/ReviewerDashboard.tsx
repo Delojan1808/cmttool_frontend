@@ -29,7 +29,7 @@ export default function ReviewerDashboard() {
             const result = await getAssignedPapers();
             setPapers(result.papers);
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Failed to load assigned papers';
+            const msg = err instanceof Error ? (err as Error).message : 'Failed to load assigned papers';
             setError(msg);
         } finally {
             setLoading(false);
@@ -43,8 +43,8 @@ export default function ReviewerDashboard() {
             await declineReviewAssignment(id);
             // Refresh papers
             loadData();
-        } catch (err: any) {
-            alert(err.message || 'Failed to decline review assignment');
+        } catch (err: unknown) {
+            alert((err as Error).message || 'Failed to decline review assignment');
             setDecliningId(null);
         }
     };
@@ -54,8 +54,8 @@ export default function ReviewerDashboard() {
             const blob = await downloadPaper(paperId);
             const url = window.URL.createObjectURL(blob);
             window.open(url, '_blank');
-        } catch (err: any) {
-            alert(err.message || 'Failed to download paper');
+        } catch (err: unknown) {
+            alert((err as Error).message || 'Failed to download paper');
         }
     };
 

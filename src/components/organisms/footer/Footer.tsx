@@ -1,7 +1,4 @@
-type FooterProps = {
-
-}
-const Footer: React.FC<FooterProps> = () => {
+const Footer: React.FC = () => {
   return (
     <footer style={{
       width: '100%',

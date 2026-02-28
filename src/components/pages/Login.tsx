@@ -34,7 +34,7 @@ const Login = () => {
         else if (user.role === 'Sub Editor') navigate('/subeditor', { replace: true });
         else if (user.role === 'Reviewer') navigate('/reviewer', { replace: true });
         else if (user.role === 'Author') navigate('/author', { replace: true });
-      } catch (e) {
+      } catch {
         // Invalid user str
       }
     }
@@ -63,8 +63,8 @@ const Login = () => {
       } else {
         setError(res.message || 'Login failed');
       }
-    } catch (err: any) {
-      setError(err.message || 'Network error — please try again.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Network error — please try again.');
     } finally {
       setLoading(false);
     }

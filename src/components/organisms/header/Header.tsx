@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser, getMyNotifications, markAsRead, markAllAsRead, type Notification } from "../../../api";
 import { useEffect, useState, useRef } from "react";
 
-type HeaderProps = {};
-const Header: React.FC<HeaderProps> = () => {
+const Header: React.FC = () => {
   const navigate = useNavigate();
   const isAuthenticated = !!sessionStorage.getItem('token');
 

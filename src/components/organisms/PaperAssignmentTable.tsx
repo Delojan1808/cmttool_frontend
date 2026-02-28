@@ -66,7 +66,7 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
             setPapers(papersResult.papers);
             setReviewers(reviewersList);
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Failed to load data';
+            const msg = err instanceof Error ? (err as Error).message : 'Failed to load data';
             setError(msg);
         } finally {
             setLoading(false);
@@ -112,7 +112,7 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
             }
             setPapers(prev => prev.map(p => (p._id === paper._id ? updated : p)));
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Operation failed';
+            const msg = err instanceof Error ? (err as Error).message : 'Operation failed';
             showToast(msg, 'error');
         } finally {
             setAssigningId(null);
@@ -126,7 +126,7 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
             const result = await getReviewsForPaper(paper._id);
             setPaperReviews(result);
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Failed to load reviews';
+            const msg = err instanceof Error ? (err as Error).message : 'Failed to load reviews';
             showToast(msg, 'error');
         } finally {
             setReviewsLoading(false);
@@ -144,7 +144,7 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
             setSelectedPaper(null);
             loadData();
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Failed to update paper status';
+            const msg = err instanceof Error ? (err as Error).message : 'Failed to update paper status';
             showToast(msg, 'error');
         } finally {
             setDecisionLoading(false);

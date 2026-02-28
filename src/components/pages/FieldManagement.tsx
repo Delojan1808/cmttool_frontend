@@ -25,8 +25,8 @@ export default function FieldManagement() {
         try {
             const data = await getFields();
             setFields(data);
-        } catch (err: any) {
-            setError(err.message || 'Failed to load professional fields.');
+        } catch (err: unknown) {
+            setError((err as Error).message || 'Failed to load professional fields.');
         } finally {
             setIsLoading(false);
         }
@@ -46,8 +46,8 @@ export default function FieldManagement() {
             setFields([...fields, newField]);
             setNewFieldName('');
             showToast('Field added successfully', 'success');
-        } catch (err: any) {
-            showToast(err.message || 'Failed to add field', 'error');
+        } catch (err: unknown) {
+            showToast((err as Error).message || 'Failed to add field', 'error');
         }
     };
 
@@ -63,8 +63,8 @@ export default function FieldManagement() {
             setFields(fields.map(f => (f._id === id ? updated : f)));
             setEditingId(null);
             showToast('Field updated successfully', 'success');
-        } catch (err: any) {
-            showToast(err.message || 'Failed to update field', 'error');
+        } catch (err: unknown) {
+            showToast((err as Error).message || 'Failed to update field', 'error');
         }
     };
 
@@ -75,8 +75,8 @@ export default function FieldManagement() {
             await deleteField(id);
             setFields(fields.filter(f => f._id !== id));
             showToast('Field deleted successfully', 'success');
-        } catch (err: any) {
-            showToast(err.message || 'Failed to delete field', 'error');
+        } catch (err: unknown) {
+            showToast((err as Error).message || 'Failed to delete field', 'error');
         }
     };
 

@@ -33,7 +33,7 @@ const SecretaryDashboard: React.FC = () => {
             const papersResult = await getAllPapers({});
             setPapers(papersResult.papers);
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Failed to load papers';
+            const msg = err instanceof Error ? (err as Error).message : 'Failed to load papers';
             setError(msg);
         } finally {
             setLoading(false);
@@ -48,8 +48,8 @@ const SecretaryDashboard: React.FC = () => {
             if (res.success && res.data) {
                 setConferences(res.data);
             }
-        } catch (err: any) {
-            setConferencesError(err.message || 'Failed to load conferences');
+        } catch (err: unknown) {
+            setConferencesError((err as Error).message || 'Failed to load conferences');
         } finally {
             setLoadingConferences(false);
         }
@@ -63,8 +63,8 @@ const SecretaryDashboard: React.FC = () => {
             await conferenceService.deleteConference(id);
             alert('Conference deleted successfully.');
             loadConferences();
-        } catch (err: any) {
-            alert(err.message || 'Failed to delete conference.');
+        } catch (err: unknown) {
+            alert((err as Error).message || 'Failed to delete conference.');
         }
     };
 

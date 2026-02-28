@@ -81,7 +81,7 @@ export const conferenceService = {
             headers: getHeaders(),
             credentials: 'include'
         });
-        const body = await handleResponse<{ success: boolean; data: any }>(res);
+        const body = await handleResponse<{ success: boolean; data: unknown }>(res);
         return body;
     },
 

@@ -1,6 +1,6 @@
 export type InputProps = {
   placeHolder: string;
-  onChange: (e: any) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
   id: string;
   type: "text" | "number" | "password" | "email" | "tel";

@@ -23,8 +23,8 @@ export default function EditorDashboard() {
             ]);
             setFields(fieldsData);
             setSubEditors(subEditorsData);
-        } catch (err: any) {
-            setError(err.message || 'Failed to load data.');
+        } catch (err: unknown) {
+            setError((err as Error).message || 'Failed to load data.');
         } finally {
             setIsLoading(false);
         }
@@ -45,8 +45,8 @@ export default function EditorDashboard() {
             const updatedField = await assignSubEditor(fieldId, subEditorId);
             setFields(prev => prev.map(f => (f._id === fieldId ? updatedField : f)));
             showToast(subEditorId ? 'Sub-Editor assigned successfully' : 'Sub-Editor unassigned', 'success');
-        } catch (err: any) {
-            showToast(err.message || 'Failed to assign sub-editor', 'error');
+        } catch (err: unknown) {
+            showToast((err as Error).message || 'Failed to assign sub-editor', 'error');
         } finally {
             setAssigningId(null);
         }

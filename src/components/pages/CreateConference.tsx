@@ -99,8 +99,8 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                 await conferenceService.createConference(data);
             }
             onSuccess();
-        } catch (err: any) {
-            setError(err.message || `Failed to ${isEditing ? 'update' : 'create'} conference`);
+        } catch (err: unknown) {
+            setError((err as Error).message || `Failed to ${isEditing ? 'update' : 'create'} conference`);
         } finally {
             setLoading(false);
         }
@@ -155,7 +155,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                                         {field ? field.name : id}
                                         <button
                                             type="button"
-                                            onClick={(e) => { e.stopPropagation(); !isCompleted && handleFieldToggle(id); }}
+                                            onClick={(e) => { e.stopPropagation(); if (!isCompleted) handleFieldToggle(id); }}
                                             style={{ background: 'none', border: 'none', color: 'currentColor', cursor: isCompleted ? 'not-allowed' : 'pointer', padding: 0, fontSize: '0.8rem', opacity: 0.7 }}
                                             disabled={isCompleted}
                                         >

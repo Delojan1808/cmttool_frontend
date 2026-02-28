@@ -27,7 +27,7 @@ const SignUp = () => {
         else if (user.role === 'Sub Editor') navigate('/subeditor', { replace: true });
         else if (user.role === 'Reviewer') navigate('/reviewer', { replace: true });
         else if (user.role === 'Author') navigate('/author', { replace: true });
-      } catch (e) {
+      } catch {
         // Invalid user str
       }
     }
@@ -64,8 +64,8 @@ const SignUp = () => {
       setNic('');
       setAddress('');
       setOrganization('');
-    } catch (err: any) {
-      setError(err.message || 'Registration failed');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Registration failed');
     } finally {
       setLoading(false);
     }

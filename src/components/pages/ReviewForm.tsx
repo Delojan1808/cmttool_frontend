@@ -120,7 +120,7 @@ export default function ReviewForm() {
                     }
                 }
             } catch (err: unknown) {
-                const msg = err instanceof Error ? err.message : 'Error fetching paper';
+                const msg = err instanceof Error ? (err as Error).message : 'Error fetching paper';
                 setError(msg);
             } finally {
                 setLoading(false);
@@ -136,8 +136,8 @@ export default function ReviewForm() {
             const blob = await downloadPaper(paper._id);
             const url = window.URL.createObjectURL(blob);
             window.open(url, '_blank');
-        } catch (err: any) {
-            alert(err.message || 'Failed to download paper');
+        } catch (err: unknown) {
+            alert((err as Error).message || 'Failed to download paper');
         }
     };
 
@@ -168,7 +168,7 @@ export default function ReviewForm() {
             // Navigate back to Dashboard
             navigate('/reviewer');
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Failed to submit review';
+            const msg = err instanceof Error ? (err as Error).message : 'Failed to submit review';
             setError(msg);
             setSubmitting(false);
         }
@@ -257,7 +257,7 @@ export default function ReviewForm() {
                                             name="recommendation"
                                             value={rec}
                                             checked={recommendation === rec}
-                                            onChange={(e) => setRecommendation(e.target.value as any)}
+                                            onChange={(e) => setRecommendation(e.target.value as 'Accept' | 'Accept with minor revisions' | 'Reconsider after major revisions' | 'Reject')}
                                             style={{ accentColor: 'var(--primary)', width: 18, height: 18, cursor: 'pointer' }}
                                         />
                                         <span style={{ color: recommendation === rec ? 'var(--primary-hover)' : 'var(--text-primary)', fontWeight: recommendation === rec ? 600 : 500 }}>

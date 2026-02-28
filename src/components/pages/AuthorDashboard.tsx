@@ -45,8 +45,8 @@ const AuthorDashboard: React.FC = () => {
                 const active = confResult.data.filter(c => new Date(c.submissionDeadline) > new Date());
                 setConferences(active);
             }
-        } catch (err: any) {
-            setError(err.message || 'Failed to load data');
+        } catch (err: unknown) {
+            setError((err as Error).message || 'Failed to load data');
         } finally {
             setLoading(false);
         }
@@ -80,7 +80,7 @@ const AuthorDashboard: React.FC = () => {
         // Handle whether conference is populated object or just an ID string
         const confId = typeof paper.conference === 'string'
             ? paper.conference
-            : (paper.conference as any)?._id || '';
+            : (paper.conference as { _id: string })?._id || '';
 
         setConferenceId(confId);
 
@@ -129,8 +129,8 @@ const AuthorDashboard: React.FC = () => {
             setCategory('');
             setConferenceId('');
             loadData();
-        } catch (err: any) {
-            setSubmitError(err.message || 'Failed to submit paper');
+        } catch (err: unknown) {
+            setSubmitError((err as Error).message || 'Failed to submit paper');
         } finally {
             setSubmitting(false);
         }
@@ -254,7 +254,7 @@ const AuthorDashboard: React.FC = () => {
                                 </label>
                                 {editingPaper && (
                                     <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--primary)' }}>
-                                        Current file: <strong>{(editingPaper as any).originalName || 'document.pdf'}</strong>
+                                        Current file: <strong>{editingPaper.originalName || 'document.pdf'}</strong>
                                     </div>
                                 )}
                                 <input

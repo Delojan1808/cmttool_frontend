@@ -24,7 +24,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
 
 // ─── Auth endpoints ──────────────────────────────────────────────────────────
 
-export async function loginUser(email: string, password: string): Promise<any> {
+export async function loginUser(email: string, password: string): Promise<{ success: boolean; message?: string; data: { token: string; user: { role: string; name?: string; email?: string } } }> {
     const res = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: getHeaders(),
@@ -34,7 +34,7 @@ export async function loginUser(email: string, password: string): Promise<any> {
     return handleResponse(res);
 }
 
-export async function registerUser(payload: any): Promise<any> {
+export async function registerUser(payload: unknown): Promise<{ success: boolean; message?: string }> {
     const res = await fetch(`${BASE_URL}/auth/register`, {
         method: 'POST',
         headers: getHeaders(),
@@ -44,7 +44,7 @@ export async function registerUser(payload: any): Promise<any> {
     return handleResponse(res);
 }
 
-export async function createAdminUser(payload: any): Promise<any> {
+export async function createAdminUser(payload: unknown): Promise<{ success: boolean; message?: string }> {
     const res = await fetch(`${BASE_URL}/auth/admin/create-user`, {
         method: 'POST',
         headers: getHeaders(),
@@ -61,7 +61,7 @@ export async function logoutUser(): Promise<void> {
     sessionStorage.removeItem('user');
 }
 
-export async function getProfile(): Promise<any> {
+export async function getProfile(): Promise<{ success: boolean; data: { user: { role: string } } }> {
     const res = await fetch(`${BASE_URL}/auth/profile`, {
         headers: getHeaders(),
         credentials: 'include'
