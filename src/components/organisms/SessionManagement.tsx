@@ -85,44 +85,7 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
 
                 <div style={{ display: 'flex', gap: '2rem' }}>
                     {/* Unassigned Accepted Papers */}
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <h3>Unassigned Accepted Papers</h3>
-                        {acceptedPapers.length === 0 ? (
-                            <p style={{ color: 'var(--text-muted)' }}>No accepted papers waiting for assignment.</p>
-                        ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                                {acceptedPapers.map(paper => {
-                                    // Make sure it's not already in ANY session
-                                    const isAssigned = localConference.sessions?.some(s => s.papers?.includes(paper._id));
-                                    if (isAssigned) return null;
 
-                                    return (
-                                        <div key={paper._id} className="glass-card" style={{ padding: '1rem' }}>
-                                            <strong>{paper.title}</strong>
-                                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                                                {typeof paper.author === 'object' ? paper.author.name : 'Unknown Author'} | {typeof paper.category === 'object' ? paper.category.name : paper.category}
-                                            </div>
-                                            <div style={{ marginTop: '0.5rem' }}>
-                                                <select
-                                                    className="input-glass"
-                                                    style={{ width: '100%', padding: '0.4rem' }}
-                                                    onChange={e => {
-                                                        if (e.target.value) handleAssignPaper(e.target.value, paper._id);
-                                                    }}
-                                                    value=""
-                                                >
-                                                    <option value="" disabled>Assign to Session...</option>
-                                                    {localConference.sessions?.map(s => (
-                                                        <option key={s._id} value={s._id}>{s.name}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
 
                     {/* Conference Sessions */}
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>

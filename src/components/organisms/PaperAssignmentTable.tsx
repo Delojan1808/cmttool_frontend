@@ -75,7 +75,7 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
 
     useEffect(() => {
         loadData();
-    }, [loadData]);
+    }, []);
 
     const handleReviewerChange = async (paper: Paper, reviewerId: string, deadline?: string) => {
         setAssigningId(paper._id);
@@ -94,6 +94,7 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
             showToast(msg, 'error');
         } finally {
             setAssigningId(null);
+            loadData()
         }
     };
 
