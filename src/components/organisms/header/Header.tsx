@@ -3,6 +3,7 @@ import { faBell, faSignOutAlt, faSun, faMoon } from "@fortawesome/free-solid-svg
 import { useNavigate } from "react-router-dom";
 import { logoutUser, getMyNotifications, markAsRead, markAllAsRead, type Notification } from "../../../api";
 import { useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ const Header: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const bellBtnRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark';
@@ -36,9 +39,17 @@ const Header: React.FC = () => {
   };
 
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
     if (isAuthenticated) {
       loadNotifications();
+      // Optional: Poll every 30 seconds
+      interval = setInterval(() => {
+        loadNotifications();
+      }, 30000);
     }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -119,7 +130,14 @@ const Header: React.FC = () => {
           <>
             <div style={{ position: 'relative' }} ref={dropdownRef}>
               <button
-                onClick={() => setShowDropdown(!showDropdown)}
+                ref={bellBtnRef}
+                onClick={() => {
+                  if (!showDropdown && bellBtnRef.current) {
+                    const rect = bellBtnRef.current.getBoundingClientRect();
+                    setDropdownPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+                  }
+                  setShowDropdown(!showDropdown);
+                }}
                 style={{
                   width: '40px', height: '40px', borderRadius: '50%',
                   background: 'rgba(255, 255, 255, 0.1)', border: '1px solid var(--glass-border)',
@@ -142,12 +160,16 @@ const Header: React.FC = () => {
                   </span>
                 )}
               </button>
-              {showDropdown && (
-                <div className="glass-card" style={{
-                  position: 'absolute', top: '120%', right: 0,
-                  width: '320px', maxHeight: '400px', overflowY: 'auto',
-                  padding: '1rem', zIndex: 1100,
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+              {showDropdown && ReactDOM.createPortal(
+                <div ref={dropdownRef} className="glass-card" style={{
+                  position: 'fixed',
+                  top: dropdownPos.top,
+                  right: dropdownPos.right,
+                  width: '320px', maxHeight: '420px', overflowY: 'auto',
+                  padding: '1rem', zIndex: 9000,
+                  background: 'rgb(10, 12, 20)',
+                  border: '1px solid rgba(99,102,241,0.35)',
+                  boxShadow: '0 12px 48px rgba(0,0,0,0.85)',
                   display: 'flex', flexDirection: 'column', gap: '0.8rem'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
@@ -185,7 +207,8 @@ const Header: React.FC = () => {
                       </div>
                     ))
                   )}
-                </div>
+                </div>,
+                document.body
               )}
             </div>
             <button

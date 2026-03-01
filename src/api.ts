@@ -11,7 +11,6 @@ function getHeaders(): HeadersInit {
 async function handleResponse<T>(res: Response): Promise<T> {
     const data = await res.json();
     if (!res.ok) {
-        // If token expired or invalid, auto-logout and redirect to login
         if (res.status === 401) {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('user');
@@ -24,7 +23,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
 
 // ─── Auth endpoints ──────────────────────────────────────────────────────────
 
-export async function loginUser(email: string, password: string): Promise<{ success: boolean; message?: string; data: { token: string; user: { role: string; name?: string; email?: string } } }> {
+export async function loginUser(email: string, password: string): Promise<{ success: boolean; message?: string; data: { token: string; user: { roles: string[]; name?: string; email?: string } } }> {
     const res = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: getHeaders(),
@@ -55,13 +54,23 @@ export async function createAdminUser(payload: unknown): Promise<{ success: bool
 }
 
 export async function logoutUser(): Promise<void> {
-    // Backend has no logout endpoint — JWT is stateless.
-    // Clear ALL stored auth data on the client side.
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
 }
 
-export async function getProfile(): Promise<{ success: boolean; data: { user: { role: string } } }> {
+export interface User {
+    _id: string;
+    name: string;
+    email: string;
+    roles: string[];
+    professionalFields?: ProfessionalField[] | string[];
+    affiliation?: string;
+    country?: string;
+    isActive: boolean;
+    createdAt: string;
+}
+
+export async function getProfile(): Promise<{ success: boolean; data: { user: User } }> {
     const res = await fetch(`${BASE_URL}/auth/profile`, {
         headers: getHeaders(),
         credentials: 'include'
@@ -69,19 +78,42 @@ export async function getProfile(): Promise<{ success: boolean; data: { user: { 
     return handleResponse(res);
 }
 
-// ─── Paper endpoints ──────────────────────────────────────────────────────────
-
-export interface CoAuthor {
-    name: string;
-    email?: string;
-    affiliation?: string;
+export async function getSecretaryUsers(): Promise<{ users: User[] }> {
+    const res = await fetch(`${BASE_URL}/auth/secretary-users`, {
+        headers: getHeaders(),
+        credentials: 'include'
+    });
+    const body = await handleResponse<{ data: { users: User[] } }>(res);
+    return body.data;
 }
+
+export async function updateUser(userId: string, payload: Partial<User>): Promise<{ user: User }> {
+    const res = await fetch(`${BASE_URL}/auth/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: getHeaders(),
+        credentials: 'include',
+        body: JSON.stringify(payload)
+    });
+    const body = await handleResponse<{ data: { user: User } }>(res);
+    return body.data;
+}
+
+export async function deleteUser(userId: string): Promise<void> {
+    const res = await fetch(`${BASE_URL}/auth/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: getHeaders(),
+        credentials: 'include'
+    });
+    await handleResponse(res);
+}
+
+// ─── Paper endpoints ──────────────────────────────────────────────────────────
 
 export interface ReviewerUser {
     _id: string;
     name: string;
     email: string;
-    professionalField?: string;
+    professionalFields?: string[];
 }
 
 export interface Paper {
@@ -89,25 +121,25 @@ export interface Paper {
     title: string;
     abstract: string;
     keywords: string[];
-    category: { _id: string; name: string } | string;
-    conference: string | { _id: string; title: string; submissionDeadline?: string; conferenceDate?: string; };
+    field: { _id: string; fieldName: string } | string;
+    conference: string | { _id: string; title: string; startDate?: string; endDate?: string; submissionDeadline?: string; reviewDeadline?: string; };
     status: 'submitted' | 'under_review' | 'reviewed' | 'revision_required' | 'accepted' | 'rejected';
-    author: string | { _id: string; name: string; email: string };
-    assignedReviewers?: { _id: string; name: string; email: string; professionalField?: string; }[];
-    reviewDeadline?: string;
-    originalName?: string;
+    authors: { _id: string; name: string; email: string }[] | string[];
+    assignedReviewers?: { _id: string; name: string; email: string; professionalFields?: string[]; }[];
+    finalDecision?: string;
+    decisionBy?: string;
+    decisionDate?: string;
+    fileName?: string;
+    fileUrl?: string;
     createdAt: string;
     updatedAt: string;
 }
 
 export interface ProfessionalField {
     _id: string;
-    name: string;
-    subEditor?: {
-        _id: string;
-        name: string;
-        email: string;
-    };
+    fieldName: string;
+    description?: string;
+    subEditors?: { _id: string; name: string; email: string; }[];
     createdAt: string;
     updatedAt: string;
 }
@@ -115,14 +147,18 @@ export interface ProfessionalField {
 export interface Conference {
     _id: string;
     title: string;
-    professionalFields: Array<{ _id: string; name: string } | string>;
+    acronym?: string;
+    description?: string;
+    startDate?: string;
+    endDate?: string;
     submissionDeadline: string;
-    conferenceDate: string;
+    reviewDeadline?: string;
+    fields: Array<{ _id: string; fieldName: string } | string>;
+    status?: string;
     sessions?: {
         _id?: string;
-        name: string;
-        startTime?: string;
-        endTime?: string;
+        title: string;
+        scheduledTime?: string;
         papers?: string[];
     }[];
     createdBy?: {
@@ -130,6 +166,8 @@ export interface Conference {
         name: string;
         email: string;
     };
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 /** GET /api/papers/my-papers — Author */
@@ -146,9 +184,7 @@ export async function getMyPapers(): Promise<{ papers: Paper[]; count: number }>
 export async function uploadPaper(formData: FormData): Promise<Paper> {
     const res = await fetch(`${BASE_URL}/papers/upload`, {
         method: 'POST',
-        headers: {
-            // Do NOT set Content-Type for FormData; the browser sets it with the boundary
-        },
+        headers: {},
         credentials: 'include',
         body: formData,
     });
@@ -159,11 +195,11 @@ export async function uploadPaper(formData: FormData): Promise<Paper> {
 /** GET /api/papers — Secretary / Editor / Sub Editor */
 export async function getAllPapers(filters?: {
     status?: string;
-    category?: string;
+    field?: string;
 }): Promise<{ papers: Paper[]; count: number }> {
     const params = new URLSearchParams();
     if (filters?.status) params.set('status', filters.status);
-    if (filters?.category) params.set('category', filters.category);
+    if (filters?.field) params.set('field', filters.field);
 
     const url = `${BASE_URL}/papers${params.toString() ? `?${params}` : ''}`;
     const res = await fetch(url, { headers: getHeaders(), credentials: 'include' });
@@ -172,10 +208,10 @@ export async function getAllPapers(filters?: {
 }
 
 /** GET /api/papers/reviewers — Secretary */
-export async function getReviewers(category?: string): Promise<ReviewerUser[]> {
+export async function getReviewers(field?: string): Promise<ReviewerUser[]> {
     let url = `${BASE_URL}/papers/reviewers`;
-    if (category) {
-        url += `?category=${encodeURIComponent(category)}`;
+    if (field) {
+        url += `?field=${encodeURIComponent(field)}`;
     }
     const res = await fetch(url, {
         headers: getHeaders(),
@@ -189,9 +225,7 @@ export async function getReviewers(category?: string): Promise<ReviewerUser[]> {
 export async function updatePaper(paperId: string, formData: FormData): Promise<Paper> {
     const res = await fetch(`${BASE_URL}/papers/${paperId}`, {
         method: 'PUT',
-        headers: {
-            // Do NOT set Content-Type for FormData
-        },
+        headers: {},
         credentials: 'include',
         body: formData,
     });
@@ -253,11 +287,12 @@ export async function assignReviewer(paperId: string, reviewerId: string, review
 }
 
 /** DELETE /api/papers/:id/assign-reviewer — Secretary */
-export async function unassignReviewer(paperId: string): Promise<Paper> {
+export async function unassignReviewer(paperId: string, reviewerId: string): Promise<Paper> {
     const res = await fetch(`${BASE_URL}/papers/${paperId}/assign-reviewer`, {
         method: 'DELETE',
         headers: getHeaders(),
-        credentials: 'include'
+        credentials: 'include',
+        body: JSON.stringify({ reviewerId })
     });
     const body = await handleResponse<{ data: { paper: Paper } }>(res);
     return body.data.paper;
@@ -329,30 +364,15 @@ export async function assignSubEditor(fieldId: string, subEditorId: string): Pro
 
 // --- Abstract Review Form --- //
 
-export interface Evaluation {
-    answer: boolean;
-    comment?: string;
-}
-
 export interface Review {
     _id: string;
     paper: string | Paper;
     reviewer: string | ReviewerUser;
-    evaluations: {
-        q1_topicRelevant: Evaluation;
-        q2_titleRelevant: Evaluation;
-        q3_objectivesClear: Evaluation;
-        q4_methodologyAppropriate: Evaluation;
-        q5_resultsInterpreted: Evaluation;
-        q6_conclusionTies: Evaluation;
-        q7_grammarSpelling: Evaluation;
-        q8_formattingAdheres: Evaluation;
-        q9_noPlagiarism: Evaluation;
-    };
-    recommendation: 'Accept' | 'Accept with minor revisions' | 'Reconsider after major revisions' | 'Reject';
+    evaluations: Record<string, { answer: boolean; comment?: string }>;
+    recommendation: string;
     suggestions?: string;
     otherComments?: string;
-    reviewerInfo: {
+    reviewerInfo?: {
         nameWithInitials: string;
         designation: string;
         institution: string;
@@ -409,9 +429,11 @@ export interface Notification {
     _id: string;
     user: string;
     message: string;
+    title?: string;
     type: string;
     relatedPaper?: string;
     read: boolean;
+    isDeleted?: boolean;
     createdAt: string;
 }
 
@@ -458,7 +480,7 @@ export async function getAllConferences(): Promise<{ conferences: Conference[]; 
 // -----------------------------------------------------
 
 /** POST /api/conferences/:id/sessions */
-export async function addConferenceSession(conferenceId: string, sessionData: { name: string, startTime?: string, endTime?: string }): Promise<Conference> {
+export async function addConferenceSession(conferenceId: string, sessionData: { title: string, scheduledTime?: string }): Promise<Conference> {
     const res = await fetch(`${BASE_URL}/conferences/${conferenceId}/sessions`, {
         method: 'POST',
         headers: getHeaders(),

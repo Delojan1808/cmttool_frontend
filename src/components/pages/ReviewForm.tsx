@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../templates/MainLayout';
-import { submitReview, getAssignedPapers, downloadPaper, type Paper, type Evaluation } from '../../api';
+import { submitReview, getAssignedPapers, downloadPaper, type Paper } from '../../api';
+
+export interface Evaluation {
+    answer: boolean;
+    comment?: string;
+}
 
 // Reusable component for the Yes/No + Comment block
 function EvaluationRow({
@@ -88,7 +93,7 @@ export default function ReviewForm() {
         q9_noPlagiarism: { answer: true, comment: '' } as Evaluation,
     });
 
-    const [recommendation, setRecommendation] = useState<'Accept' | 'Accept with minor revisions' | 'Reconsider after major revisions' | 'Reject'>('Accept');
+    const [recommendation, setRecommendation] = useState<'strong_accept' | 'accept' | 'minor_revision' | 'major_revision' | 'reject'>('accept');
     const [suggestions, setSuggestions] = useState('');
     const [otherComments, setOtherComments] = useState('');
 
@@ -145,7 +150,8 @@ export default function ReviewForm() {
         e.preventDefault();
         if (!paperId || !paper) return;
 
-        if (paper.reviewDeadline && new Date(paper.reviewDeadline) < new Date()) {
+        const deadlineStr = typeof paper.conference === 'object' ? paper.conference.reviewDeadline : undefined;
+        if (deadlineStr && new Date(deadlineStr) < new Date()) {
             setError('The review deadline has passed. You can no longer submit a review.');
             return;
         }
@@ -202,7 +208,7 @@ export default function ReviewForm() {
                             <div style={{ fontWeight: 500, color: 'var(--primary)' }}>{paper.title}</div>
 
                             <div style={{ fontWeight: 600 }}>Professional Field:</div>
-                            <div style={{ color: 'var(--text-muted)' }}>{typeof paper.category === 'object' ? paper.category.name : paper.category}</div>
+                            <div style={{ color: 'var(--text-muted)' }}>{typeof paper.field === 'object' ? paper.field.fieldName : String(paper.field)}</div>
 
                             <div style={{ fontWeight: 600 }}>Document:</div>
                             <div>
@@ -246,23 +252,24 @@ export default function ReviewForm() {
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 {[
-                                    'Accept',
-                                    'Accept with minor revisions',
-                                    'Reconsider after major revisions',
-                                    'Reject'
+                                    { value: 'strong_accept', label: 'Strong Accept' },
+                                    { value: 'accept', label: 'Accept' },
+                                    { value: 'minor_revision', label: 'Minor Revision' },
+                                    { value: 'major_revision', label: 'Major Revision' },
+                                    { value: 'reject', label: 'Reject' }
                                 ].map((rec) => (
-                                    <label key={rec} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '1rem', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', background: recommendation === rec ? 'rgba(99, 102, 241, 0.1)' : 'rgba(0,0,0,0.1)', borderColor: recommendation === rec ? 'var(--primary)' : 'var(--glass-border)', transition: 'all 0.2s' }}>
+                                    <label key={rec.value} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '1rem', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', background: recommendation === rec.value ? 'rgba(99, 102, 241, 0.1)' : 'rgba(0,0,0,0.1)', borderColor: recommendation === rec.value ? 'var(--primary)' : 'var(--glass-border)', transition: 'all 0.2s' }}>
                                         <input
                                             type="radio"
                                             name="recommendation"
-                                            value={rec}
-                                            checked={recommendation === rec}
-                                            onChange={(e) => setRecommendation(e.target.value as 'Accept' | 'Accept with minor revisions' | 'Reconsider after major revisions' | 'Reject')}
+                                            value={rec.value}
+                                            checked={recommendation === rec.value}
+                                            onChange={(e) => setRecommendation(e.target.value as any)}
                                             style={{ accentColor: 'var(--primary)', width: 18, height: 18, cursor: 'pointer' }}
                                         />
-                                        <span style={{ color: recommendation === rec ? 'var(--primary-hover)' : 'var(--text-primary)', fontWeight: recommendation === rec ? 600 : 500 }}>
-                                            {rec}
-                                            {rec === 'Accept with minor revisions' && <span style={{ color: 'var(--text-muted)', fontWeight: 400, marginLeft: 6 }}>(state in "Suggestions for improvement")</span>}
+                                        <span style={{ color: recommendation === rec.value ? 'var(--primary-hover)' : 'var(--text-primary)', fontWeight: recommendation === rec.value ? 600 : 500 }}>
+                                            {rec.label}
+                                            {rec.value === 'minor_revision' && <span style={{ color: 'var(--text-muted)', fontWeight: 400, marginLeft: 6 }}>(state in "Suggestions for improvement")</span>}
                                         </span>
                                     </label>
                                 ))}
@@ -338,13 +345,13 @@ export default function ReviewForm() {
                         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem' }}>
                             <button
                                 type="submit"
-                                disabled={submitting || (paper.reviewDeadline ? new Date(paper.reviewDeadline) < new Date() : false)}
+                                disabled={submitting || (typeof paper.conference === 'object' && paper.conference.reviewDeadline ? new Date(paper.conference.reviewDeadline) < new Date() : false)}
                                 className="btn-primary"
                                 style={{
                                     padding: '12px 32px',
                                     fontSize: '1rem',
-                                    opacity: submitting || (paper.reviewDeadline && new Date(paper.reviewDeadline) < new Date()) ? 0.7 : 1,
-                                    cursor: submitting || (paper.reviewDeadline && new Date(paper.reviewDeadline) < new Date()) ? 'not-allowed' : 'pointer'
+                                    opacity: submitting || (typeof paper.conference === 'object' && paper.conference.reviewDeadline && new Date(paper.conference.reviewDeadline) < new Date()) ? 0.7 : 1,
+                                    cursor: submitting || (typeof paper.conference === 'object' && paper.conference.reviewDeadline && new Date(paper.conference.reviewDeadline) < new Date()) ? 'not-allowed' : 'pointer'
                                 }}
                             >
                                 {submitting ? 'Submitting Review...' : 'Submit Review'}

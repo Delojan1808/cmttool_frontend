@@ -14,14 +14,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
 
     try {
         const user = JSON.parse(userStr);
-        if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+        const roles = user.roles || [];
+        if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.some((r: string) => roles.includes(r))) {
             // Logged in but not authorized
             // Redirect based on their role
-            if (user.role === 'Secretary') return <Navigate to="/secretary" replace />;
-            if (user.role === 'Editor') return <Navigate to="/editor" replace />;
-            if (user.role === 'Sub Editor') return <Navigate to="/subeditor" replace />;
-            if (user.role === 'Reviewer') return <Navigate to="/reviewer" replace />;
-            if (user.role === 'Author') return <Navigate to="/author" replace />;
+            if (roles.includes('Secretary')) return <Navigate to="/secretary" replace />;
+            if (roles.includes('Editor')) return <Navigate to="/editor" replace />;
+            if (roles.includes('Sub Editor')) return <Navigate to="/subeditor" replace />;
+            if (roles.includes('Reviewer')) return <Navigate to="/reviewer" replace />;
+            if (roles.includes('Author')) return <Navigate to="/author" replace />;
             return <Navigate to="/login" replace />;
         }
     } catch {

@@ -108,20 +108,20 @@ export default function ReviewerDashboard() {
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-muted)' }}>
-                                                    {typeof paper.category === 'object' ? paper.category.name : paper.category}
+                                                    {typeof paper.field === 'object' ? paper.field.fieldName : String(paper.field)}
                                                 </td>
                                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                                         <span className={`badge ${cls}`} style={{ width: 'fit-content' }}>
                                                             {formatStatus(paper.status)}
                                                         </span>
-                                                        {paper.reviewDeadline && !isReviewed && (
+                                                        {typeof paper.conference === 'object' && paper.conference.reviewDeadline && !isReviewed && (
                                                             <div style={{
                                                                 fontSize: '0.8rem',
                                                                 fontWeight: 600,
-                                                                color: new Date(paper.reviewDeadline) < new Date() ? 'var(--error)' : 'var(--warning)'
+                                                                color: new Date(paper.conference.reviewDeadline) < new Date() ? 'var(--error)' : 'var(--warning)'
                                                             }}>
-                                                                ⏳ Due: {new Date(paper.reviewDeadline).toLocaleDateString()}
+                                                                ⏳ Due: {new Date(paper.conference.reviewDeadline).toLocaleDateString()}
                                                             </div>
                                                         )}
                                                     </div>

@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     getAllPapers,
     type Paper,
 } from '../../api';
 import CreateConference from './CreateConference';
-import CreateAdminUser from './CreateAdminUser';
 import PaperAssignmentTable from '../organisms/PaperAssignmentTable';
 import SessionManagement from '../organisms/SessionManagement';
 import { conferenceService, type ConferenceData } from '../../services/conferenceService';
 import MainLayout from '../templates/MainLayout';
 
 const SecretaryDashboard: React.FC = () => {
+    const navigate = useNavigate();
     const [papers, setPapers] = useState<Paper[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showCreateConference, setShowCreateConference] = useState(false);
-    const [showCreateAdminUser, setShowCreateAdminUser] = useState(false);
     const [editingConference, setEditingConference] = useState<ConferenceData | undefined>(undefined);
     const [managingSessionsFor, setManagingSessionsFor] = useState<ConferenceData | undefined>(undefined);
 
@@ -90,6 +90,10 @@ const SecretaryDashboard: React.FC = () => {
     };
 
     // ─────────────────────────────────────────────────────────────────────────
+    const navigateToUserManagement = () => {
+        navigate('/secretary/users');
+    };
+
     return (
         <MainLayout>
             <div style={{ width: '100%', animation: 'fadeIn 0.5s ease-out' }}>
@@ -102,17 +106,17 @@ const SecretaryDashboard: React.FC = () => {
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <button
                             className="btn-primary"
-                            onClick={() => { setShowCreateConference(true); setShowCreateAdminUser(false); }}
+                            onClick={() => { setShowCreateConference(true); }}
                             style={{ padding: '0.6rem 1.2rem' }}
                         >
                             ➕ Create Conference
                         </button>
                         <button
-                            className="btn-primary"
-                            onClick={() => { setShowCreateAdminUser(true); setShowCreateConference(false); }}
-                            style={{ padding: '0.6rem 1.2rem', background: 'var(--secondary)' }}
+                            className="btn-secondary"
+                            onClick={navigateToUserManagement}
+                            style={{ padding: '0.6rem 1.2rem' }}
                         >
-                            ➕ Create Admin User
+                            👥 Manage Users
                         </button>
                         <a href="/secretary/fields" className="btn-secondary" style={{ padding: '0.6rem 1.2rem', display: 'flex', alignItems: 'center' }}>
                             ⚙️ Manage Fields
@@ -132,18 +136,6 @@ const SecretaryDashboard: React.FC = () => {
                             onCancel={() => {
                                 setShowCreateConference(false);
                                 setEditingConference(undefined);
-                            }}
-                        />
-                    )}
-
-                    {showCreateAdminUser && (
-                        <CreateAdminUser
-                            onSuccess={() => {
-                                setShowCreateAdminUser(false);
-                                alert("Admin user created successfully!");
-                            }}
-                            onCancel={() => {
-                                setShowCreateAdminUser(false);
                             }}
                         />
                     )}
@@ -184,7 +176,7 @@ const SecretaryDashboard: React.FC = () => {
 
                                         <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                <span>📅</span> Conf Date: {new Date(conf.conferenceDate).toLocaleDateString()}
+                                                <span>📅</span> Conf Date: {new Date(conf.startDate || '').toLocaleDateString()}
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                                 <span>⏱️</span> Deadline: {new Date(conf.submissionDeadline).toLocaleDateString()}
@@ -192,9 +184,9 @@ const SecretaryDashboard: React.FC = () => {
                                         </div>
 
                                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
-                                            {conf.professionalFields.map((field, i) => (
+                                            {conf.fields?.map((field: any, i: number) => (
                                                 <span key={i} className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--text-secondary)', border: '1px solid var(--glass-border)' }}>
-                                                    {typeof field === 'object' ? field.name : field}
+                                                    {typeof field === 'object' ? field.fieldName : field}
                                                 </span>
                                             ))}
                                         </div>
@@ -256,6 +248,8 @@ const SecretaryDashboard: React.FC = () => {
                     )}
 
                     <PaperAssignmentTable userRole="secretary" />
+
+
 
                 </div>
             </div>

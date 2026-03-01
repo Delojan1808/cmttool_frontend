@@ -1,23 +1,4 @@
-export interface ConferenceData {
-    _id?: string;
-    title: string;
-    professionalFields: Array<{ _id: string; name: string } | string>;
-    submissionDeadline: string;
-    conferenceDate: string;
-    createdBy?: {
-        _id: string;
-        name: string;
-        email: string;
-    };
-    sessions?: {
-        _id?: string;
-        name: string;
-        startTime?: string;
-        endTime?: string;
-        papers?: string[];
-    }[];
-    createdAt?: string;
-}
+import { type Conference } from '../api';
 
 const BASE_URL = 'http://localhost:5000/api';
 
@@ -32,7 +13,6 @@ function getHeaders(): HeadersInit {
 async function handleResponse<T>(res: Response): Promise<T> {
     const data = await res.json();
     if (!res.ok) {
-        // If token expired or invalid, auto-logout and redirect to login
         if (res.status === 401) {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('user');
@@ -43,8 +23,10 @@ async function handleResponse<T>(res: Response): Promise<T> {
     return data as T;
 }
 
+export type ConferenceData = Conference; // alias for backwards compatibility
+
 export const conferenceService = {
-    createConference: async (data: ConferenceData) => {
+    createConference: async (data: Partial<ConferenceData>) => {
         const res = await fetch(`${BASE_URL}/conferences`, {
             method: 'POST',
             headers: getHeaders(),
@@ -85,7 +67,7 @@ export const conferenceService = {
         return body;
     },
 
-    addSession: async (conferenceId: string, sessionData: { name: string, startTime?: string, endTime?: string }) => {
+    addSession: async (conferenceId: string, sessionData: { title: string, scheduledTime?: string }) => {
         const res = await fetch(`${BASE_URL}/conferences/${conferenceId}/sessions`, {
             method: 'POST',
             headers: getHeaders(),

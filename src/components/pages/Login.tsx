@@ -29,11 +29,12 @@ const Login = () => {
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
-        if (user.role === 'Secretary') navigate('/secretary', { replace: true });
-        else if (user.role === 'Editor') navigate('/editor', { replace: true });
-        else if (user.role === 'Sub Editor') navigate('/subeditor', { replace: true });
-        else if (user.role === 'Reviewer') navigate('/reviewer', { replace: true });
-        else if (user.role === 'Author') navigate('/author', { replace: true });
+        const roles = user.roles || [];
+        if (roles.includes('Secretary')) navigate('/secretary', { replace: true });
+        else if (roles.includes('Editor')) navigate('/editor', { replace: true });
+        else if (roles.includes('Sub Editor')) navigate('/subeditor', { replace: true });
+        else if (roles.includes('Reviewer')) navigate('/reviewer', { replace: true });
+        else if (roles.includes('Author')) navigate('/author', { replace: true });
       } catch {
         // Invalid user str
       }
@@ -52,13 +53,13 @@ const Login = () => {
         sessionStorage.setItem('token', res.data.token);
         sessionStorage.setItem('user', JSON.stringify(res.data.user));
 
-        const userRole = res.data.user.role;
+        const roles = res.data.user.roles || [];
         // Role-based redirect
-        if (userRole === 'Secretary') navigate('/secretary');
-        else if (userRole === 'Editor') navigate('/editor');
-        else if (userRole === 'Sub Editor') navigate('/subeditor');
-        else if (userRole === 'Reviewer') navigate('/reviewer');
-        else if (userRole === 'Author') navigate('/author');
+        if (roles.includes('Secretary')) navigate('/secretary');
+        else if (roles.includes('Editor')) navigate('/editor');
+        else if (roles.includes('Sub Editor')) navigate('/subeditor');
+        else if (roles.includes('Reviewer')) navigate('/reviewer');
+        else if (roles.includes('Author')) navigate('/author');
         else navigate('/login'); // Unknown role fallback
       } else {
         setError(res.message || 'Login failed');

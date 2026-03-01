@@ -31,7 +31,7 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
             return;
         }
 
-        const confDate = new Date(conference.conferenceDate).toDateString();
+        const confDate = new Date(conference.startDate || '').toDateString();
         const start = new Date(`${confDate} ${startTime}`);
         const end = new Date(`${confDate} ${endTime}`);
 
@@ -43,9 +43,8 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
         setLoading(true);
         try {
             const updated = await conferenceService.addSession(conference._id!, {
-                name: sessionName,
-                startTime: start.toISOString(),
-                endTime: end.toISOString()
+                title: sessionName,
+                scheduledTime: start.toISOString() // Or some combined string
             });
             setLocalConference(updated);
             setSessionName('');
@@ -89,7 +88,7 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
 
                 <h2 style={{ margin: 0 }}>Manage Sessions: {conference.title}</h2>
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-                    Conference Date: <strong>{new Date(conference.conferenceDate).toLocaleDateString()}</strong>
+                    Conference Date: <strong>{new Date(conference.startDate || '').toLocaleDateString()}</strong>
                 </div>
 
                 {error && (
@@ -157,7 +156,7 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
                                         <div key={paper._id} className="glass-card" style={{ padding: '1rem' }}>
                                             <strong>{paper.title}</strong>
                                             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                                                {typeof paper.author === 'object' ? paper.author.name : 'Unknown Author'} | {typeof paper.category === 'object' ? paper.category.name : paper.category}
+                                                {paper.authors?.length > 0 && typeof paper.authors[0] === 'object' ? (paper.authors[0] as unknown as { name: string }).name : 'Unknown Author'} | {typeof paper.field === 'object' ? paper.field.fieldName : String(paper.field)}
                                             </div>
                                             <div style={{ marginTop: '0.5rem' }}>
                                                 <select
@@ -170,7 +169,7 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
                                                 >
                                                     <option value="" disabled>Assign to Session...</option>
                                                     {localConference.sessions?.map(s => (
-                                                        <option key={s._id} value={s._id}>{s.name}</option>
+                                                        <option key={s._id} value={s._id}>{s.title}</option>
                                                     ))}
                                                 </select>
                                             </div>
@@ -189,7 +188,7 @@ const SessionManagement: React.FC<SessionManagementProps> = ({ conference, paper
                         ) : (
                             localConference.sessions.map(s => (
                                 <div key={s._id} className="glass-card" style={{ padding: '1rem', borderLeft: '3px solid var(--primary)' }}>
-                                    <h4 style={{ margin: '0 0 0.5rem 0' }}>{s.name}</h4>
+                                    <h4 style={{ margin: '0 0 0.5rem 0' }}>{s.title}</h4>
                                     {(!s.papers || s.papers.length === 0) ? (
                                         <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Empty session</div>
                                     ) : (

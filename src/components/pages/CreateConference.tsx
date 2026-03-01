@@ -10,7 +10,7 @@ interface CreateConferenceProps {
 
 const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel, initialData }) => {
     const isEditing = !!initialData;
-    const isCompleted = isEditing && initialData?.conferenceDate ? new Date(initialData.conferenceDate) < new Date() : false;
+    const isCompleted = isEditing && initialData?.startDate ? new Date(initialData.startDate) < new Date() : false;
 
     const [title, setTitle] = useState(initialData?.title || '');
     const [availableFields, setAvailableFields] = useState<ProfessionalField[]>([]);
@@ -20,8 +20,8 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
 
     useEffect(() => {
         getFields().then(setAvailableFields).catch(console.error);
-        if (initialData?.professionalFields) {
-            setSelectedFields(initialData.professionalFields.map(f => typeof f === 'object' ? f._id : f));
+        if (initialData?.fields) {
+            setSelectedFields(initialData.fields.map((f: any) => typeof f === 'object' ? f._id : f));
         }
     }, [initialData]);
 
@@ -49,7 +49,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
     };
 
     const [submissionDeadline, setSubmissionDeadline] = useState(formatDateForInput(initialData?.submissionDeadline));
-    const [conferenceDate, setConferenceDate] = useState(formatDateForInput(initialData?.conferenceDate));
+    const [startDate, setStartDate] = useState(formatDateForInput(initialData?.startDate));
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -59,14 +59,14 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
         setError(null);
 
         // Basic validation
-        if (!title.trim() || selectedFields.length === 0 || !submissionDeadline || !conferenceDate) {
+        if (!title.trim() || selectedFields.length === 0 || !submissionDeadline || !startDate) {
             setError('All fields are required and at least one professional field must be selected.');
             return;
         }
 
         const now = new Date();
         const deadlineDate = new Date(submissionDeadline);
-        const confDate = new Date(conferenceDate);
+        const confDate = new Date(startDate);
 
         if (!isEditing) {
             if (deadlineDate <= now) {
@@ -86,11 +86,11 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
 
         try {
             setLoading(true);
-            const data: ConferenceData = {
+            const data: Partial<ConferenceData> = {
                 title,
-                professionalFields: selectedFields,
+                fields: selectedFields,
                 submissionDeadline,
-                conferenceDate
+                startDate
             };
 
             if (isEditing && initialData._id) {
@@ -152,7 +152,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                                 const field = availableFields.find(f => f._id === id);
                                 return (
                                     <span key={id} className="badge badge-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem' }}>
-                                        {field ? field.name : id}
+                                        {field ? field.fieldName : id}
                                         <button
                                             type="button"
                                             onClick={(e) => { e.stopPropagation(); if (!isCompleted) handleFieldToggle(id); }}
@@ -189,7 +189,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                                             onChange={() => handleFieldToggle(field._id)}
                                             style={{ accentColor: 'var(--primary)', width: '16px', height: '16px', cursor: 'pointer' }}
                                         />
-                                        <span style={{ color: 'var(--text-primary)' }}>{field.name}</span>
+                                        <span style={{ color: 'var(--text-primary)' }}>{field.fieldName}</span>
                                     </label>
                                 ))
                             )}
@@ -211,11 +211,11 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                     </div>
 
                     <div style={{ flex: 1, minWidth: '200px' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Conference Date</label>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Start Date</label>
                         <input
                             type="datetime-local"
-                            value={conferenceDate}
-                            onChange={(e) => setConferenceDate(e.target.value)}
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
                             style={inputStyle}
                             disabled={isCompleted}
                             required

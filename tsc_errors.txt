@@ -1,0 +1,71 @@
+﻿src/components/organisms/PaperAssignmentTable.tsx(93,74): error TS2339: Property 'conferenceDate' does not exist on type '{ _id: string; title: string; startDate?: string | undefined; endDate?: string | undefined; submissionDeadline?: string | undefined; }'.
+src/components/organisms/PaperAssignmentTable.tsx(94,60): error TS2339: Property 'conferenceDate' does not exist on type '{ _id: string; title: string; startDate?: string | undefined; endDate?: string | undefined; submissionDeadline?: string | undefined; }'.
+src/components/organisms/PaperAssignmentTable.tsx(107,33): error TS2554: Expected 2 arguments, but got 1.
+src/components/organisms/PaperAssignmentTable.tsx(181,67): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/organisms/PaperAssignmentTable.tsx(181,97): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/organisms/PaperAssignmentTable.tsx(181,119): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/organisms/PaperAssignmentTable.tsx(183,84): error TS2551: Property 'professionalField' does not exist on type 'ReviewerUser'. Did you mean 'professionalFields'?
+src/components/organisms/PaperAssignmentTable.tsx(194,115): error TS2551: Property 'author' does not exist on type 'Paper'. Did you mean 'authors'?
+src/components/organisms/PaperAssignmentTable.tsx(194,138): error TS2551: Property 'author' does not exist on type 'Paper'. Did you mean 'authors'?
+src/components/organisms/PaperAssignmentTable.tsx(194,166): error TS2551: Property 'author' does not exist on type 'Paper'. Did you mean 'authors'?
+src/components/organisms/PaperAssignmentTable.tsx(195,120): error TS2551: Property 'author' does not exist on type 'Paper'. Did you mean 'authors'?
+src/components/organisms/PaperAssignmentTable.tsx(195,143): error TS2551: Property 'author' does not exist on type 'Paper'. Did you mean 'authors'?
+src/components/organisms/PaperAssignmentTable.tsx(195,171): error TS2551: Property 'author' does not exist on type 'Paper'. Did you mean 'authors'?
+src/components/organisms/PaperAssignmentTable.tsx(198,59): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/organisms/PaperAssignmentTable.tsx(198,89): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/organisms/PaperAssignmentTable.tsx(198,111): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/organisms/PaperAssignmentTable.tsx(220,103): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/organisms/PaperAssignmentTable.tsx(220,135): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/organisms/PaperAssignmentTable.tsx(304,72): error TS2339: Property 'evaluations' does not exist on type 'Review'.
+src/components/organisms/PaperAssignmentTable.tsx(306,132): error TS18046: 'ev' is of type 'unknown'.
+src/components/organisms/PaperAssignmentTable.tsx(306,182): error TS18046: 'ev' is of type 'unknown'.
+src/components/organisms/PaperAssignmentTable.tsx(307,58): error TS18046: 'ev' is of type 'unknown'.
+src/components/organisms/PaperAssignmentTable.tsx(307,164): error TS18046: 'ev' is of type 'unknown'.
+src/components/organisms/PaperAssignmentTable.tsx(313,58): error TS2339: Property 'suggestions' does not exist on type 'Review'.
+src/components/organisms/PaperAssignmentTable.tsx(313,80): error TS2339: Property 'otherComments' does not exist on type 'Review'.
+src/components/organisms/PaperAssignmentTable.tsx(315,65): error TS2339: Property 'suggestions' does not exist on type 'Review'.
+src/components/organisms/PaperAssignmentTable.tsx(315,156): error TS2339: Property 'suggestions' does not exist on type 'Review'.
+src/components/organisms/PaperAssignmentTable.tsx(316,65): error TS2339: Property 'otherComments' does not exist on type 'Review'.
+src/components/organisms/PaperAssignmentTable.tsx(316,148): error TS2339: Property 'otherComments' does not exist on type 'Review'.
+src/components/organisms/SessionManagement.tsx(160,63): error TS2551: Property 'author' does not exist on type 'Paper'. Did you mean 'authors'?
+src/components/organisms/SessionManagement.tsx(160,91): error TS2551: Property 'author' does not exist on type 'Paper'. Did you mean 'authors'?
+src/components/organisms/SessionManagement.tsx(160,139): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/organisms/SessionManagement.tsx(160,169): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/organisms/SessionManagement.tsx(160,191): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/AuthorDashboard.tsx(88,38): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/AuthorDashboard.tsx(88,68): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/AuthorDashboard.tsx(88,90): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/AuthorDashboard.tsx(257,77): error TS2339: Property 'originalName' does not exist on type 'Paper'.
+src/components/pages/AuthorDashboard.tsx(306,63): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/AuthorDashboard.tsx(306,93): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/AuthorDashboard.tsx(306,115): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/CreateAdminUser.tsx(148,62): error TS2339: Property 'name' does not exist on type 'ProfessionalField'.
+src/components/pages/CreateAdminUser.tsx(148,71): error TS2339: Property 'name' does not exist on type 'ProfessionalField'.
+src/components/pages/CreateConference.tsx(155,56): error TS2339: Property 'name' does not exist on type 'ProfessionalField'.
+src/components/pages/CreateConference.tsx(192,95): error TS2339: Property 'name' does not exist on type 'ProfessionalField'.
+src/components/pages/EditorDashboard.tsx(115,60): error TS2339: Property 'name' does not exist on type 'ProfessionalField'.
+src/components/pages/EditorDashboard.tsx(121,74): error TS2551: Property 'subEditor' does not exist on type 'ProfessionalField'. Did you mean 'subEditors'?
+src/components/pages/FieldManagement.tsx(56,27): error TS2339: Property 'name' does not exist on type 'ProfessionalField'.
+src/components/pages/FieldManagement.tsx(146,120): error TS2339: Property 'name' does not exist on type 'ProfessionalField'.
+src/components/pages/FieldManagement.tsx(158,106): error TS2339: Property 'name' does not exist on type 'ProfessionalField'.
+src/components/pages/Login.tsx(55,40): error TS2551: Property 'role' does not exist on type '{ roles: string[]; name?: string | undefined; email?: string | undefined; }'. Did you mean 'roles'?
+src/components/pages/ReviewerDashboard.tsx(111,67): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/ReviewerDashboard.tsx(111,97): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/ReviewerDashboard.tsx(111,119): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/ReviewerDashboard.tsx(118,64): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewerDashboard.tsx(122,87): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewerDashboard.tsx(124,88): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(4,75): error TS2305: Module '"../../api"' has no exported member 'Evaluation'.
+src/components/pages/ReviewForm.tsx(148,19): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(148,52): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(159,17): error TS2322: Type '"Accept" | "Reject" | "Accept with minor revisions" | "Reconsider after major revisions"' is not assignable to type '"strong_accept" | "accept" | "minor_revision" | "major_revision" | "reject" | undefined'.
+  Type '"Accept"' is not assignable to type '"strong_accept" | "accept" | "minor_revision" | "major_revision" | "reject" | undefined'. Did you mean '"accept"'?
+src/components/pages/ReviewForm.tsx(205,87): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(205,117): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(205,139): error TS2339: Property 'category' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(341,64): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(341,96): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(346,67): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(346,100): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(347,66): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.
+src/components/pages/ReviewForm.tsx(347,99): error TS2339: Property 'reviewDeadline' does not exist on type 'Paper'.

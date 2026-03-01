@@ -17,7 +17,7 @@ const AuthorDashboard: React.FC = () => {
     const [title, setTitle] = useState('');
     const [abstract, setAbstract] = useState('');
     const [keywords, setKeywords] = useState('');
-    const [category, setCategory] = useState('');
+    const [field, setField] = useState('');
     const [conferenceId, setConferenceId] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -26,10 +26,11 @@ const AuthorDashboard: React.FC = () => {
     const availableFields = React.useMemo(() => {
         if (!conferenceId) return [];
         const selectedConf = conferences.find(c => c._id === conferenceId);
-        // professionalFields are now populated {_id, name} objects
-        return (selectedConf?.professionalFields || []).map(f =>
-            typeof f === 'string' ? { _id: f, name: f } : f
-        ) as { _id: string; name: string }[];
+        // professionalFields is now "fields" in the new schema, but the component fetches Conf.fields!
+        // Wait, did conferenceService return "professionalFields"? Yes, the backend returns "fields"
+        return (selectedConf?.fields || []).map(f =>
+            typeof f === 'string' ? { _id: f, fieldName: f } : f
+        ) as { _id: string; fieldName: string }[];
     }, [conferenceId, conferences]);
 
     const loadData = useCallback(async () => {
@@ -63,7 +64,7 @@ const AuthorDashboard: React.FC = () => {
         setTitle('');
         setAbstract('');
         setKeywords('');
-        setCategory('');
+        setField('');
         setConferenceId('');
         setSubmitError(null);
         setShowSubmitModal(true);
@@ -84,9 +85,8 @@ const AuthorDashboard: React.FC = () => {
 
         setConferenceId(confId);
 
-        // Extract category name string (category may now be a populated object)
-        const catName = typeof paper.category === 'object' ? paper.category.name : paper.category;
-        setCategory(catName);
+        // Extract field name string (field may now be a populated object)
+        setField(typeof paper.field === 'object' ? paper.field._id : String(paper.field));
 
         setSubmitError(null);
         setShowSubmitModal(true);
@@ -96,7 +96,7 @@ const AuthorDashboard: React.FC = () => {
         e.preventDefault();
         setSubmitError(null);
 
-        if (!title || !abstract || !category || (!file && submissionType === 'new')) {
+        if (!title || !abstract || !field || (!file && submissionType === 'new')) {
             setSubmitError('Please fill in all required fields and upload a file');
             return;
         }
@@ -108,7 +108,7 @@ const AuthorDashboard: React.FC = () => {
             formData.append('title', title);
             formData.append('abstract', abstract);
             formData.append('keywords', keywords);
-            formData.append('category', category); // category state holds the field _id
+            formData.append('field', field); // field state holds the field _id
             if (submissionType === 'new') {
                 formData.append('conferenceId', conferenceId);
             }
@@ -126,7 +126,7 @@ const AuthorDashboard: React.FC = () => {
             setTitle('');
             setAbstract('');
             setKeywords('');
-            setCategory('');
+            setField('');
             setConferenceId('');
             loadData();
         } catch (err: unknown) {
@@ -222,16 +222,16 @@ const AuthorDashboard: React.FC = () => {
 
                             <div style={{ display: 'flex', gap: '1rem' }}>
                                 <div style={{ flex: 1 }}>
-                                    <label style={labelStyle}>Professional Field (Category)</label>
+                                    <label style={labelStyle}>Professional Field</label>
                                     <select
-                                        value={category}
-                                        onChange={e => setCategory(e.target.value)}
+                                        value={field}
+                                        onChange={e => setField(e.target.value)}
                                         style={inputStyle}
                                         required
                                     >
                                         <option value="">Select Professional Field...</option>
                                         {availableFields.map(f => (
-                                            <option key={f._id} value={f._id}>{f.name}</option>
+                                            <option key={f._id} value={f._id}>{f.fieldName}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -254,7 +254,7 @@ const AuthorDashboard: React.FC = () => {
                                 </label>
                                 {editingPaper && (
                                     <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--primary)' }}>
-                                        Current file: <strong>{editingPaper.originalName || 'document.pdf'}</strong>
+                                        Current file: <strong>{editingPaper.fileName || 'document.pdf'}</strong>
                                     </div>
                                 )}
                                 <input
@@ -303,7 +303,7 @@ const AuthorDashboard: React.FC = () => {
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                                             <span className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)' }}>
-                                                {typeof paper.category === 'object' ? paper.category.name : paper.category}
+                                                {typeof paper.field === 'object' ? paper.field.fieldName : String(paper.field)}
                                             </span>
                                             <span className={`badge ${paper.status === 'accepted' ? 'badge-success' : paper.status === 'rejected' ? 'badge-error' : paper.status === 'submitted' ? 'badge-primary' : 'badge-warning'}`}>
                                                 {paper.status.replace(/_/g, ' ').toUpperCase()}

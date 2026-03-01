@@ -8,6 +8,7 @@ import SubEditorDashboard from "./components/pages/SubEditorDashboard"
 import ReviewerDashboard from "./components/pages/ReviewerDashboard"
 import ReviewForm from "./components/pages/ReviewForm"
 import AuthorDashboard from "./components/pages/AuthorDashboard"
+import UserManagement from "./components/pages/UserManagement"
 import ProtectedRoute from "./components/templates/ProtectedRoute"
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['Secretary']} />}>
           <Route path="/secretary" element={<SecretaryDashboard />} />
           <Route path="/secretary/fields" element={<FieldManagement />} />
+          <Route path="/secretary/users" element={<UserManagement />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['Editor']} />}>

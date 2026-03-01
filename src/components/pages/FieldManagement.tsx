@@ -53,7 +53,7 @@ export default function FieldManagement() {
 
     const handleStartEdit = (field: ProfessionalField) => {
         setEditingId(field._id);
-        setEditName(field.name);
+        setEditName(field.fieldName);
     };
 
     const handleSaveEdit = async (id: string) => {
@@ -143,7 +143,7 @@ export default function FieldManagement() {
                                                     }}
                                                 />
                                             ) : (
-                                                <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{field.name}</span>
+                                                <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{field.fieldName}</span>
                                             )}
                                         </td>
                                         <td style={{ padding: '1rem 1.5rem' }}>
@@ -155,7 +155,7 @@ export default function FieldManagement() {
                                             ) : (
                                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                     <button onClick={() => handleStartEdit(field)} style={actionBtnStyles('var(--primary-hover)')}>Edit</button>
-                                                    <button onClick={() => handleDelete(field._id, field.name)} style={actionBtnStyles('var(--error)')}>Delete</button>
+                                                    <button onClick={() => handleDelete(field._id, field.fieldName)} style={actionBtnStyles('var(--error)')}>Delete</button>
                                                 </div>
                                             )}
                                         </td>

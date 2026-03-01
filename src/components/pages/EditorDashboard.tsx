@@ -112,13 +112,13 @@ export default function EditorDashboard() {
                                         return (
                                             <tr key={field._id} style={{ borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s' }} onMouseEnter={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.05)'; }} onMouseLeave={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'; }}>
                                                 <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-primary)', fontWeight: 500, width: '40%' }}>
-                                                    {field.name}
+                                                    {field.fieldName}
                                                 </td>
                                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                                         <select
                                                             className="input-glass"
-                                                            value={field.subEditor?._id || ''}
+                                                            value={field.subEditors?.[0]?._id || ''}
                                                             onChange={(e) => handleAssign(field._id, e.target.value)}
                                                             disabled={isAssigning}
                                                             style={{

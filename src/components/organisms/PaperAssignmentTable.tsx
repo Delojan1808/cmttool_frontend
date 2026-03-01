@@ -41,7 +41,6 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [assigningId, setAssigningId] = useState<string | null>(null); // paper ID being mutated
-    const [deadlines, setDeadlines] = useState<Record<string, string>>({}); // Selected deadlines per paper
 
     // Decision Modal State
     const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
@@ -90,10 +89,10 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                 return;
             }
 
-            if (typeof paper.conference === 'object' && paper.conference.conferenceDate) {
-                const confDate = new Date(paper.conference.conferenceDate);
+            if (typeof paper.conference === 'object' && paper.conference.startDate) {
+                const confDate = new Date(paper.conference.startDate);
                 if (selectedDeadline >= confDate) {
-                    showToast('Review deadline must be before the conference date', 'error');
+                    showToast('Review deadline must be before the conference start date', 'error');
                     setAssigningId(null);
                     return;
                 }
@@ -104,10 +103,10 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
         try {
             let updated: Paper;
             if (reviewerId === '') {
-                updated = await unassignReviewer(paper._id);
+                updated = await unassignReviewer(paper._id, paper.assignedReviewers && paper.assignedReviewers.length > 0 ? paper.assignedReviewers[0]._id : '');
                 showToast('Reviewer removed successfully', 'success');
             } else {
-                updated = await assignReviewer(paper._id, reviewerId, deadline);
+                updated = await assignReviewer(paper._id, reviewerId);
                 showToast('Reviewer assigned successfully', 'success');
             }
             setPapers(prev => prev.map(p => (p._id === paper._id ? updated : p)));
@@ -177,10 +176,12 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                         ) : (
                             papers.map(paper => {
                                 const isAssigning = assigningId === paper._id;
-                                // Get the category name string for comparison (category is now a populated object)
-                                const categoryName = typeof paper.category === 'object' ? paper.category.name : paper.category;
+                                // Get the field name string for comparison (field is now a populated object)
+                                const categoryName = typeof paper.field === 'object' ? paper.field.fieldName : String(paper.field);
                                 // Filter reviewers whose professional field matches this paper's professional field
-                                const availableReviewers = reviewers.filter(r => r.professionalField === categoryName);
+                                const availableReviewers = reviewers.filter(r => r.professionalFields && r.professionalFields.some(f => {
+                                    return f === categoryName;
+                                }));
 
                                 return (
                                     <tr key={paper._id} style={{ borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s' }} onMouseEnter={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.05)'; }} onMouseLeave={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'; }}>
@@ -191,11 +192,11 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                                             </div>
                                         </td>
                                         <td style={{ padding: '1.2rem 1.5rem' }}>
-                                            <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{paper.author && typeof paper.author === 'object' ? paper.author.name : 'Unknown Author'}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{paper.author && typeof paper.author === 'object' ? paper.author.email : ''}</div>
+                                            <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{paper.authors?.length > 0 && typeof paper.authors[0] === 'object' ? (paper.authors[0] as unknown as { name: string }).name : 'Unknown Author'}</div>
+                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{paper.authors?.length > 0 && typeof paper.authors[0] === 'object' ? (paper.authors[0] as unknown as { email: string }).email : ''}</div>
                                         </td>
                                         <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                                            {typeof paper.category === 'object' ? paper.category.name : paper.category}
+                                            {typeof paper.field === 'object' ? paper.field.fieldName : String(paper.field)}
                                         </td>
                                         <td style={{ padding: '1.2rem 1.5rem' }}>
                                             <StatusBadge status={paper.status} />
@@ -213,20 +214,11 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                                                 ) : userRole !== 'editor' ? (
                                                     <>
                                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                                            <input
-                                                                type="date"
-                                                                className="input-glass"
-                                                                disabled={isAssigning || (paper.assignedReviewers && paper.assignedReviewers.length > 0)}
-                                                                value={deadlines[paper._id] || (paper.reviewDeadline ? new Date(paper.reviewDeadline).toISOString().split('T')[0] : '')}
-                                                                onChange={e => setDeadlines(prev => ({ ...prev, [paper._id]: e.target.value }))}
-                                                                style={{ padding: '6px 10px', fontSize: '0.8rem', minWidth: 200 }}
-                                                                title="Review Deadline (Set before assigning)"
-                                                            />
                                                             <select
                                                                 className="input-glass"
                                                                 disabled={isAssigning}
                                                                 value={paper.assignedReviewers && paper.assignedReviewers.length > 0 ? paper.assignedReviewers[0]._id : ''}
-                                                                onChange={e => handleReviewerChange(paper, e.target.value, deadlines[paper._id])}
+                                                                onChange={e => handleReviewerChange(paper, e.target.value)}
                                                                 style={{
                                                                     padding: '8px 12px', minWidth: 200,
                                                                     opacity: isAssigning ? 0.6 : 1,
