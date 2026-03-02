@@ -33,7 +33,7 @@ function App() {
           <Route path="/editor" element={<EditorDashboard />} />
         </Route>
 
-        <Route element={<ProtectedRoute allowedRoles={['Sub Editor']} />}>
+        <Route element={<ProtectedRoute allowedRoles={['SubEditor']} />}>
           <Route path="/subeditor" element={<SubEditorDashboard />} />
         </Route>
 

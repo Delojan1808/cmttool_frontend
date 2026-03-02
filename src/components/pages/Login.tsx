@@ -32,7 +32,7 @@ const Login = () => {
         const roles = user.roles || [];
         if (roles.includes('Secretary')) navigate('/secretary', { replace: true });
         else if (roles.includes('Editor')) navigate('/editor', { replace: true });
-        else if (roles.includes('Sub Editor')) navigate('/subeditor', { replace: true });
+        else if (roles.includes('SubEditor')) navigate('/subeditor', { replace: true });
         else if (roles.includes('Reviewer')) navigate('/reviewer', { replace: true });
         else if (roles.includes('Author')) navigate('/author', { replace: true });
       } catch {
@@ -57,7 +57,7 @@ const Login = () => {
         // Role-based redirect
         if (roles.includes('Secretary')) navigate('/secretary');
         else if (roles.includes('Editor')) navigate('/editor');
-        else if (roles.includes('Sub Editor')) navigate('/subeditor');
+        else if (roles.includes('SubEditor')) navigate('/subeditor');
         else if (roles.includes('Reviewer')) navigate('/reviewer');
         else if (roles.includes('Author')) navigate('/author');
         else navigate('/login'); // Unknown role fallback

@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
             // Redirect based on their role
             if (roles.includes('Secretary')) return <Navigate to="/secretary" replace />;
             if (roles.includes('Editor')) return <Navigate to="/editor" replace />;
-            if (roles.includes('Sub Editor')) return <Navigate to="/subeditor" replace />;
+            if (roles.includes('SubEditor')) return <Navigate to="/subeditor" replace />;
             if (roles.includes('Reviewer')) return <Navigate to="/reviewer" replace />;
             if (roles.includes('Author')) return <Navigate to="/author" replace />;
             return <Navigate to="/login" replace />;

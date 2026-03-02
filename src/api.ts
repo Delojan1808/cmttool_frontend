@@ -1,17 +1,15 @@
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function getHeaders(): HeadersInit {
-    const token = sessionStorage.getItem('token');
     return {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
+        'Content-Type': 'application/json'
     };
 }
 
 async function handleResponse<T>(res: Response): Promise<T> {
     const data = await res.json();
     if (!res.ok) {
-        if (res.status === 401) {
+        if (res.status === 401 && window.location.pathname !== '/login') {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('user');
             window.location.href = '/login';
@@ -113,7 +111,7 @@ export interface ReviewerUser {
     _id: string;
     name: string;
     email: string;
-    professionalFields?: string[];
+    professionalFields?: (string | { _id: string; fieldName: string })[];
 }
 
 export interface Paper {
@@ -192,7 +190,7 @@ export async function uploadPaper(formData: FormData): Promise<Paper> {
     return body.data.paper;
 }
 
-/** GET /api/papers — Secretary / Editor / Sub Editor */
+/** PUT /api/papers/:id/status — Editor / SubEditor */
 export async function getAllPapers(filters?: {
     status?: string;
     field?: string;
@@ -233,7 +231,7 @@ export async function updatePaper(paperId: string, formData: FormData): Promise<
     return body.data.paper;
 }
 
-/** PUT /api/papers/:id/status — Editor / Sub Editor */
+/** PUT /api/papers/:id/status — Editor / SubEditor */
 export async function updatePaperStatus(paperId: string, status: string): Promise<Paper> {
     const res = await fetch(`${BASE_URL}/papers/${paperId}/status`, {
         method: 'PUT',

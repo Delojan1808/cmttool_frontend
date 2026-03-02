@@ -9,7 +9,7 @@ const ALL_ROLES = ['Editor', 'SubEditor', 'Reviewer', 'Author'];
 
 // Display label for roles
 const ROLE_LABELS: Record<string, string> = {
-    SubEditor: 'Sub Editor',
+    SubEditor: 'SubEditor',
     Editor: 'Editor',
     Reviewer: 'Reviewer',
     Author: 'Author',
@@ -38,6 +38,8 @@ const UserManagementTable: React.FC = () => {
     });
     const [saving, setSaving] = useState(false);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+    const [confirmDelete, setConfirmDelete] = useState<string | null>(null); // userId to delete
+
 
     const showToast = useCallback((message: string, type: 'success' | 'error') => {
         setToast({ message, type });
@@ -107,7 +109,7 @@ const UserManagementTable: React.FC = () => {
             if (isCreating) {
                 const primaryRole = editFormData.roles[0];
                 const payload: any = { name: editFormData.name, email: editFormData.email, password, role: primaryRole };
-                if (['Reviewer', 'Sub Editor'].includes(primaryRole) && editFormData.professionalFields.length > 0) {
+                if (['Reviewer', 'SubEditor'].includes(primaryRole) && editFormData.professionalFields.length > 0) {
                     payload.professionalField = editFormData.professionalFields[0];
                 }
                 await createAdminUser(payload);
@@ -128,7 +130,13 @@ const UserManagementTable: React.FC = () => {
     };
 
     const handleDelete = async (userId: string) => {
-        if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
+        setConfirmDelete(userId);
+    };
+
+    const confirmDeletion = async () => {
+        if (!confirmDelete) return;
+        const userId = confirmDelete;
+        setConfirmDelete(null);
         try {
             await deleteUser(userId);
             setUsers(prev => prev.filter(u => u._id !== userId));
@@ -148,7 +156,6 @@ const UserManagementTable: React.FC = () => {
     const roleBadgeStyle = (role: string): React.CSSProperties => {
         const colours: Record<string, { bg: string; color: string }> = {
             Editor: { bg: 'rgba(6,182,212,0.15)', color: '#22d3ee' },
-            'Sub Editor': { bg: 'rgba(168,85,247,0.15)', color: '#c084fc' },
             SubEditor: { bg: 'rgba(168,85,247,0.15)', color: '#c084fc' },
             Reviewer: { bg: 'rgba(99,102,241,0.15)', color: '#818cf8' },
             Author: { bg: 'rgba(16,185,129,0.15)', color: '#34d399' },
@@ -221,7 +228,7 @@ const UserManagementTable: React.FC = () => {
                                     <button
                                         className="btn-secondary"
                                         style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderColor: 'rgba(239,68,68,0.3)', color: 'var(--error)' }}
-                                        onClick={() => handleDelete(user._id)}
+                                        onClick={(e) => { e.stopPropagation(); handleDelete(user._id); }}
                                         title="Delete"
                                         disabled={user.roles.includes('Secretary')}
                                     >
@@ -278,7 +285,7 @@ const UserManagementTable: React.FC = () => {
             {/* ── Tab description strip ── */}
             <div style={{ padding: '0.75rem 1.5rem', background: 'rgba(0,0,0,0.15)', borderBottom: '1px solid var(--glass-border)', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                 {activeTab === 'admin'
-                    ? '👔 Editors, Sub Editors, and Reviewers associated with your conferences.'
+                    ? '👔 Editors, SubEditors, and Reviewers associated with your conferences.'
                     : '✍️ Authors who have submitted papers to your conferences.'}
             </div>
 
@@ -329,7 +336,7 @@ const UserManagementTable: React.FC = () => {
                                 </div>
                             </div>
                             {/* Professional Fields — only for admin tab with relevant roles */}
-                            {activeTab === 'admin' && editFormData.roles.some(r => ['Reviewer', 'Sub Editor', 'SubEditor'].includes(r)) && (
+                            {activeTab === 'admin' && editFormData.roles.some(r => ['Reviewer', 'SubEditor'].includes(r)) && (
                                 <div>
                                     <label style={labelStyle}>Professional Fields</label>
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', maxHeight: '150px', overflowY: 'auto', padding: '0.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
@@ -356,6 +363,24 @@ const UserManagementTable: React.FC = () => {
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
                             <button className="btn-secondary" onClick={handleCancelEdit} disabled={saving}>Cancel</button>
                             <button className="btn-primary" onClick={handleSaveEdit} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* ── Custom Deletion Confirmation Modal —- */}
+            {confirmDelete && ReactDOM.createPortal(
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 3000, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(3px)' }}>
+                    <div className="glass-card" style={{ width: '90%', maxWidth: '400px', padding: '2rem', textAlign: 'center' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
+                        <h3>Confirm Deletion</h3>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+                            Are you sure you want to delete this user? This action cannot be undone.
+                        </p>
+                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                            <button className="btn-secondary" onClick={() => setConfirmDelete(null)}>Cancel</button>
+                            <button className="btn-primary" style={{ background: 'var(--error)', borderColor: 'var(--error)' }} onClick={confirmDeletion}>Delete User</button>
                         </div>
                     </div>
                 </div>,

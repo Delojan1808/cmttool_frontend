@@ -24,7 +24,7 @@ const SignUp = () => {
         const user = JSON.parse(userStr);
         if (user.role === 'Secretary') navigate('/secretary', { replace: true });
         else if (user.role === 'Editor') navigate('/editor', { replace: true });
-        else if (user.role === 'Sub Editor') navigate('/subeditor', { replace: true });
+        else if (user.role === 'SubEditor') navigate('/subeditor', { replace: true });
         else if (user.role === 'Reviewer') navigate('/reviewer', { replace: true });
         else if (user.role === 'Author') navigate('/author', { replace: true });
       } catch {

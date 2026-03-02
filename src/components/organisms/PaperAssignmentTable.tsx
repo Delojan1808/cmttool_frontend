@@ -180,7 +180,8 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                                 const categoryName = typeof paper.field === 'object' ? paper.field.fieldName : String(paper.field);
                                 // Filter reviewers whose professional field matches this paper's professional field
                                 const availableReviewers = reviewers.filter(r => r.professionalFields && r.professionalFields.some(f => {
-                                    return f === categoryName;
+                                    const fieldName = typeof f === 'object' ? f.fieldName : f;
+                                    return fieldName === categoryName;
                                 }));
 
                                 return (
