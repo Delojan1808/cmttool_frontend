@@ -133,7 +133,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="e.g. International Conference on Information Technology 2026"
-                        style={inputStyle}
+                        className="input-glass"
                         disabled={isCompleted}
                         required
                     />
@@ -143,7 +143,8 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Professional Fields</label>
                     <div
                         onClick={() => !isCompleted && setIsDropdownOpen(!isDropdownOpen)}
-                        style={{ ...inputStyle, cursor: isCompleted ? 'not-allowed' : 'pointer', display: 'flex', flexWrap: 'wrap', gap: '0.4rem', minHeight: '45px', alignItems: 'center', opacity: isCompleted ? 0.6 : 1 }}
+                        className="input-glass"
+                        style={{ cursor: isCompleted ? 'not-allowed' : 'pointer', display: 'flex', flexWrap: 'wrap', gap: '0.4rem', minHeight: '45px', alignItems: 'center', opacity: isCompleted ? 0.6 : 1, padding: '0.5rem 1rem' }}
                     >
                         {selectedFields.length === 0 ? (
                             <span style={{ color: 'var(--text-muted)' }}>Select professional fields...</span>
@@ -204,7 +205,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                             type="datetime-local"
                             value={submissionDeadline}
                             onChange={(e) => setSubmissionDeadline(e.target.value)}
-                            style={inputStyle}
+                            className="input-glass"
                             disabled={isCompleted}
                             required
                         />
@@ -216,7 +217,7 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
                             type="datetime-local"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            style={inputStyle}
+                            className="input-glass"
                             disabled={isCompleted}
                             required
                         />
@@ -237,16 +238,6 @@ const CreateConference: React.FC<CreateConferenceProps> = ({ onSuccess, onCancel
     );
 };
 
-const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '0.75rem 1rem',
-    borderRadius: 'var(--radius-md)',
-    border: '1px solid var(--glass-border)',
-    background: 'rgba(0,0,0,0.2)',
-    color: 'var(--text-primary)',
-    fontFamily: 'inherit',
-    fontSize: '0.95rem',
-    transition: 'all 0.3s ease'
-};
+// Styles moved to index.css (.input-glass)
 
 export default CreateConference;
