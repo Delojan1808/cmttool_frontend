@@ -163,13 +163,15 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                             <th style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem' }}>Author</th>
                             <th style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem' }}>Professional Field</th>
                             <th style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem' }}>Status</th>
-                            <th style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem' }}>Actions</th>
+                            {userRole !== 'secretary' && (
+                                <th style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem' }}>Actions</th>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
                         {papers.length === 0 ? (
                             <tr>
-                                <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
+                                <td colSpan={userRole === 'secretary' ? 4 : 5} style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
                                     No papers available.
                                 </td>
                             </tr>
@@ -202,49 +204,51 @@ export default function PaperAssignmentTable({ userRole }: { userRole: string })
                                         <td style={{ padding: '1.2rem 1.5rem' }}>
                                             <StatusBadge status={paper.status} />
                                         </td>
-                                        <td style={{ padding: '1.2rem 1.5rem' }}>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                                {userRole === 'editor' && paper.status === 'reviewed' ? (
-                                                    <button
-                                                        onClick={() => handleOpenDecisionModal(paper)}
-                                                        className="btn-primary"
-                                                        style={{ padding: '6px 12px', fontSize: '0.85rem' }}
-                                                    >
-                                                        View Reviews & Decide
-                                                    </button>
-                                                ) : userRole !== 'editor' ? (
-                                                    <>
-                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                                            <select
-                                                                className="input-glass"
-                                                                disabled={isAssigning}
-                                                                value={paper.assignedReviewers && paper.assignedReviewers.length > 0 ? paper.assignedReviewers[0]._id : ''}
-                                                                onChange={e => handleReviewerChange(paper, e.target.value)}
-                                                                style={{
-                                                                    padding: '8px 12px', minWidth: 200,
-                                                                    opacity: isAssigning ? 0.6 : 1,
-                                                                    cursor: isAssigning ? 'not-allowed' : 'pointer'
-                                                                }}
-                                                            >
-                                                                <option value="" style={{ color: '#000' }}>— Unassigned —</option>
-                                                                {availableReviewers.map(r => (
-                                                                    <option key={r._id} value={r._id} style={{ color: '#000' }}>
-                                                                        {r.name}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                        {availableReviewers.length === 0 && (
-                                                            <span style={{ fontSize: '0.8rem', color: 'var(--error)' }}>
-                                                                No reviewers found for this professional field
-                                                            </span>
-                                                        )}
-                                                    </>
-                                                ) : (
-                                                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>—</span>
-                                                )}
-                                            </div>
-                                        </td>
+                                        {userRole !== 'secretary' && (
+                                            <td style={{ padding: '1.2rem 1.5rem' }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                                    {userRole === 'editor' && paper.status === 'reviewed' ? (
+                                                        <button
+                                                            onClick={() => handleOpenDecisionModal(paper)}
+                                                            className="btn-primary"
+                                                            style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+                                                        >
+                                                            View Reviews & Decide
+                                                        </button>
+                                                    ) : userRole !== 'editor' ? (
+                                                        <>
+                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                                                <select
+                                                                    className="input-glass"
+                                                                    disabled={isAssigning}
+                                                                    value={paper.assignedReviewers && paper.assignedReviewers.length > 0 ? paper.assignedReviewers[0]._id : ''}
+                                                                    onChange={e => handleReviewerChange(paper, e.target.value)}
+                                                                    style={{
+                                                                        padding: '8px 12px', minWidth: 200,
+                                                                        opacity: isAssigning ? 0.6 : 1,
+                                                                        cursor: isAssigning ? 'not-allowed' : 'pointer'
+                                                                    }}
+                                                                >
+                                                                    <option value="" style={{ color: '#000' }}>— Unassigned —</option>
+                                                                    {availableReviewers.map(r => (
+                                                                        <option key={r._id} value={r._id} style={{ color: '#000' }}>
+                                                                            {r.name}
+                                                                        </option>
+                                                                    ))}
+                                                                </select>
+                                                            </div>
+                                                            {availableReviewers.length === 0 && (
+                                                                <span style={{ fontSize: '0.8rem', color: 'var(--error)' }}>
+                                                                    No reviewers found for this professional field
+                                                                </span>
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>—</span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        )}
                                     </tr>
                                 );
                             })
